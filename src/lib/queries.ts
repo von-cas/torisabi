@@ -18,6 +18,23 @@ export interface ProductFilters {
   category?: string;
   status?: string;
   sort?: "newest" | "price-asc" | "price-desc";
+  /** Free-text keyword search over name, description and category. */
+  q?: string;
+}
+
+/**
+ * Turn a raw search box value into safe keyword tokens. Anything that isn't a
+ * letter, number or space is dropped, because those characters (commas,
+ * parentheses, `%`, `*`) are operators inside a PostgREST `.or()` filter and
+ * would otherwise break the query or let a visitor shape it.
+ */
+function keywords(raw: string): string[] {
+  return raw
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/gi, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 6); // a handful of words is plenty; ignore the rest
 }
 
 function attachPhotos(
@@ -49,6 +66,18 @@ export async function getProducts(
   let query = supabase.from("public_products").select("*");
   if (filters.category) query = query.eq("category", filters.category);
   if (filters.status) query = query.eq("status", filters.status);
+
+  // Keyword search: a product must contain EVERY typed word somewhere in its
+  // name, description or category. Each word becomes its own OR group, and
+  // chaining .or() calls ANDs them — so "rattan bag" matches an item whose name
+  // has "rattan" and whose description has "bag", not only the exact phrase.
+  if (filters.q) {
+    for (const word of keywords(filters.q)) {
+      query = query.or(
+        `name.ilike.%${word}%,description.ilike.%${word}%,category.ilike.%${word}%`,
+      );
+    }
+  }
 
   // Available items first, then the chosen sort.
   query = query.order("status", { ascending: true });

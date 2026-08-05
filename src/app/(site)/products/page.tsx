@@ -14,6 +14,7 @@ import {
   safeGetCategories,
   safeGetProducts,
 } from "@/components/site/safe-queries";
+import { SearchBox } from "@/components/site/search-box";
 import { BUTTON, SHADE } from "@/components/site/sticker";
 import type { ProductFilters as QueryFilters } from "@/lib/queries";
 import { breadcrumbJsonLd } from "@/lib/seo";
@@ -43,18 +44,20 @@ function toSort(value: string | undefined): SortValue | undefined {
 
 /** The filters actually applied — anything the query cannot use is dropped. */
 function readFilters(params: Record<string, string | string[] | undefined>) {
+  const q = firstValue(params.q)?.trim();
   return {
     category: firstValue(params.category) || undefined,
     status: toStatus(firstValue(params.status)),
     sort: toSort(firstValue(params.sort)),
+    q: q ? q.slice(0, 80) : undefined,
   };
 }
 
 export async function generateMetadata({
   searchParams,
 }: ProductsPageProps): Promise<Metadata> {
-  const { category, status, sort } = readFilters(await searchParams);
-  const isFiltered = Boolean(category || status || sort);
+  const { category, status, sort, q } = readFilters(await searchParams);
+  const isFiltered = Boolean(category || status || sort || q);
 
   return {
     title: "Products",
@@ -71,15 +74,15 @@ export async function generateMetadata({
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  const { category, status, sort } = readFilters(await searchParams);
+  const { category, status, sort, q } = readFilters(await searchParams);
 
   const [products, categories] = await Promise.all([
-    safeGetProducts({ category, status, sort }),
+    safeGetProducts({ category, status, sort, q }),
     safeGetCategories(),
   ]);
 
-  const query: GalleryQuery = { category, status, sort };
-  const isFiltered = Boolean(category || status || sort);
+  const query: GalleryQuery = { category, status, sort, q };
+  const isFiltered = Boolean(category || status || sort || q);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -98,7 +101,8 @@ export default async function ProductsPage({
       {/* An empty shelf has nothing to filter, so the controls stay out of the
           way — unless a filter is what emptied it. */}
       {(products.length > 0 || isFiltered) && (
-        <div className="mt-10">
+        <div className="mt-10 space-y-6">
+          <SearchBox query={query} />
           <ProductFilters categories={categories} query={query} />
         </div>
       )}
@@ -121,13 +125,15 @@ export default async function ProductsPage({
         >
           <Strawberry className="mx-auto size-10" />
           <p className="mt-4 font-hand text-2xl font-extrabold text-ink sm:text-3xl">
-            {isFiltered
-              ? "Nothing here with those filters"
-              : "The shelf is empty — for now"}
+            {q
+              ? `Nothing matches “${q}”`
+              : isFiltered
+                ? "Nothing here with those filters"
+                : "The shelf is empty — for now"}
           </p>
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-ink/75">
             {isFiltered
-              ? "The shelf is small and it changes often. Try widening the search."
+              ? "The shelf is small and it changes often. Try another word, or clear the search."
               : "I am making the first batch. Everything goes up here the moment it is finished, and it lands on Instagram first."}
           </p>
           {isFiltered ? (

@@ -8,6 +8,7 @@ export interface GalleryQuery {
   category?: string;
   status?: string;
   sort?: string;
+  q?: string;
 }
 
 const SORT_OPTIONS = [
@@ -20,6 +21,7 @@ const SORT_OPTIONS = [
 function buildHref(current: GalleryQuery, patch: GalleryQuery): string {
   const next = { ...current, ...patch };
   const params = new URLSearchParams();
+  if (next.q) params.set("q", next.q);
   if (next.category) params.set("category", next.category);
   if (next.status) params.set("status", next.status);
   if (next.sort && next.sort !== "newest") params.set("sort", next.sort);
@@ -70,7 +72,9 @@ export function ProductFilters({
   categories: string[];
   query: GalleryQuery;
 }) {
-  const hasFilters = Boolean(query.category ?? query.status ?? query.sort);
+  const hasFilters = Boolean(
+    query.category ?? query.status ?? query.sort ?? query.q,
+  );
 
   return (
     <div className="space-y-4">
