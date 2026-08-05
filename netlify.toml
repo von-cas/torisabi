@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Security headers live in next.config.ts so they apply to server-rendered
+# responses too; Netlify serves whatever Next emits. Nothing to duplicate here.

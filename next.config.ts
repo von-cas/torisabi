@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 // Deliberately not a nonce-based CSP: Next inlines hydration data and Tailwind
 // injects styles, so 'unsafe-inline' is required for script-src and style-src
@@ -46,8 +45,5 @@ const nextConfig: NextConfig = {
     ];
   },
 };
-
-// Gives `next dev` access to Cloudflare bindings.
-initOpenNextCloudflareForDev();
 
 export default nextConfig;
