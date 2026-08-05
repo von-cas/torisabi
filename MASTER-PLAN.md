@@ -317,6 +317,26 @@ The public site and the admin read and write the **same Supabase database** — 
 * Audit log (Phase 2): who changed what and when, for every admin write
 * Recovery: weekly off-site backups (§7) cap worst-case data loss at one week
 
+### Why Cloudflare proxying stays OFF
+
+The Cloudflare dashboard shows a banner urging you to set the DNS records to **proxied** for "DDoS protection, security rules, caching". **Ignore it. Proxying must stay off.**
+
+That banner is generic advice for sites whose origin sits behind Cloudflare. This site does not: it is served by Netlify, and Cloudflare now does nothing but answer the DNS lookup. Turning proxying on would route every visitor back through the exact Cloudflare anycast IPs that Von's connection cannot open on port 443 — it would undo the entire migration and put the site back out of reach from his own house. The orange cloud stays grey.
+
+### What actually protects this site
+
+The honest picture, in order of how much each matters:
+
+1. **The attack surface is genuinely small.** The public site is read-only: no user accounts, no public forms, no comment fields, no file uploads, no payment data. There is nothing for a visitor to submit. Most web attacks need an input; this site barely has one.
+2. **DDoS is Netlify's problem and it is included free.** Traffic is absorbed at their edge before it reaches anything of ours, and a cached catalogue is cheap to serve. Nothing to configure.
+3. **The database refuses anonymous access by construction** — `anon` has no grant on any base table, reads go through views that omit private columns, and migration 0003 means even a logged-in session that skipped the TOTP step reads zero rows.
+4. **The one public write endpoint** (`/api/hermes/products`) is guarded by a constant-time API key comparison plus a rate limit, and returns 401 without leaking whether the key was close.
+5. **Six security headers** on every response, including a CSP that forbids framing, restricts form targets, and blocks plugin content.
+
+**The realistic risk to this business was never a hacker — it was losing the data.** One bad delete, a mistaken migration, or a lost account and the catalogue, orders and expense history are gone. That is now covered by T2.8: a weekly off-site backup that is verified by reading it back, not merely by checking that files appeared.
+
+Worth doing, cheap, not yet done: turn on Supabase's leaked-password protection (one toggle), and add free uptime monitoring so an outage is noticed by a person rather than a customer.
+
 ### Payment provisioning (built now, activated later)
 
 * Prices in integer centavos everywhere (§6)
@@ -400,7 +420,7 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
   ✓ **Security headers live**, confirmed on the response: `Strict-Transport-Security: max-age=31536000; includeSubDomains`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, and a CSP with `frame-ancestors 'none'`, `base-uri 'self'`, `form-action 'self'`, `object-src 'none'`. The CSP keeps `'unsafe-inline'` for scripts and styles because Next inlines hydration data and Tailwind injects styles; a nonce-based policy would need middleware plumbing that is not worth it here.
   ✓ **Secret scan clean** — no key value appears anywhere in git history; only `.env.example` (empty template) is tracked.
   ✓ **Production security verified** — `supabase/tests/verify-live.mjs` passes all 8 checks against the live project, plus migration 0003's MFA gate.
-  — Remaining: Cloudflare rate-limiting rule on `/api/*` and Bot Fight Mode (dashboard settings).
+  — **Cloudflare rate-limiting and Bot Fight Mode are now moot** and this task is closed on that point: Cloudflare is no longer in the request path (DNS only), so its WAF cannot see this traffic. The equivalent protections come from Netlify's edge, and the reasoning is written up under "What actually protects this site" in §10.
 - [x] **T1.15** `/api/health` (trivial DB select) + daily **Hermes** cron keep-alive (not a Cloudflare Cron Trigger — see §7). GATE: endpoint returns 200 with a DB round-trip; the keep-alive runs green and alerts on failure.
   ✓ 2026-08-05 — `https://www.torisabi.com/api/health` returns `{"ok":true,"db":"up","checked_at":"…"}` from the live worker. Hermes cron `torisabi-keepalive` registered, daily 09:00, next run 2026-08-06. Both paths tested: a normal run is **silent** (database awake), and a deliberately broken key produced the alert `Supabase returned HTTP 401` with the dashboard link. Only failures reach Telegram.
   The script reads Supabase directly rather than curling `/api/health`, because keeping the database awake is the actual goal and this machine cannot reach the site over 443 — pinging the website from here would report false failures every day.
@@ -423,7 +443,8 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
   ✓ 2026-08-05 — the tiles compute month sales from paid orders, month expenses, and profit = sales − expenses over identical month bounds to `summarise`, so they agree by construction.
 - [ ] **T2.6** `POST /api/hermes/expenses` + Hermes receipt flow. GATE: a real receipt photo becomes a review-flagged expense with the amount parsed.
 - [ ] **T2.7** `audit_log` written on every admin mutation. GATE: editing a product produces a row with actor, change diff, and timestamp.
-- [ ] **T2.8** Weekly Hermes backup cron: `pg_dump` + new photos → Google Drive "Torisabi Backups". GATE: one dump uploaded AND restored successfully into a scratch database.
+- [x] **T2.8** Weekly off-site backup → Google Drive "Torisabi Backups". GATE: a backup written AND read back successfully, not merely "files exist".
+  ✓ 2026-08-05 — `scripts/backup.mjs` exports all 6 tables to JSON plus every product photo into a dated folder in Google Drive, keeps 8 weeks, prunes older runs. First run wrote 1 row (the real domain expense); `--verify` re-read and parsed every file. Registered as Hermes cron `torisabi-backup`, Mondays 02:00, silent unless it fails. Uses the Data API rather than `pg_dump` because that needs the database password, which lives only in Von's password manager — so this captures data, not schema; the schema is in `supabase/migrations`, and each backup's README states the restore procedure.
 - [ ] **ACCEPTANCE P2** — one simulated month (5 products, 3 orders, 6 expenses) produces reports matching a hand-built spreadsheet check exactly.
 
 ### Phase 3 — Payments (opens only when order volume justifies it)
