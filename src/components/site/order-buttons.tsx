@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { Check } from "lucide-react";
+
 import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 import {
@@ -7,16 +12,28 @@ import {
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+/** The note copied to the clipboard so the customer can paste it in the chat. */
+function orderNote(name: string, code: string): string {
+  return `Hi Torisabi! I'm interested in ${name} (${code}). Is this still available?`;
+}
+
 /**
- * The one ordering action: a single button that opens the Torisabi Messenger
- * chat. Sold and reserved items keep their page and photos but the button is
- * replaced by a disabled state. No client JavaScript — it is just a link.
+ * One ordering action. Tapping it copies a ready-made order note to the
+ * clipboard and opens the Torisabi Messenger chat, so the customer only has to
+ * paste — Messenger cannot pre-fill the composer from a link, and this is the
+ * closest thing to it. Sold and reserved items show a disabled state instead.
  */
 export function OrderButtons({
+  name,
+  code,
   status,
 }: {
+  name: string;
+  code: string;
   status: ProductStatus;
 }) {
+  const [copied, setCopied] = useState(false);
+
   if (!isOrderable(status)) {
     return (
       <div className="space-y-3">
@@ -37,16 +54,42 @@ export function OrderButtons({
     );
   }
 
+  // Copy runs inside the click gesture, then the anchor opens Messenger in a new
+  // tab on its own. If the clipboard is blocked (older browser), the chat still
+  // opens — the customer just types instead of pasting.
+  function copyNote() {
+    navigator.clipboard
+      ?.writeText(orderNote(name, code))
+      .then(() => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 5000);
+      })
+      .catch(() => {});
+  }
+
   return (
-    <a
-      href={MESSENGER_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={SHADE.magenta}
-      className={cn(BUTTON_PRIMARY, "w-full")}
-    >
-      <MessengerIcon className="size-5" />
-      Message to order
-    </a>
+    <div className="space-y-2">
+      <a
+        href={MESSENGER_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={copyNote}
+        style={SHADE.magenta}
+        className={cn(BUTTON_PRIMARY, "w-full")}
+      >
+        <MessengerIcon className="size-5" />
+        Message to order
+      </a>
+
+      {/* Nothing in the resting state; a brief confirmation only after a tap. */}
+      <p aria-live="polite" className="min-h-5 text-sm font-medium text-magenta-ink">
+        {copied ? (
+          <span className="inline-flex items-center gap-1.5">
+            <Check className="size-4" aria-hidden="true" />
+            Order note copied — just paste it in the chat.
+          </span>
+        ) : null}
+      </p>
+    </div>
   );
 }

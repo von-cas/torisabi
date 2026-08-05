@@ -166,7 +166,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           )}
 
-          <OrderButtons status={product.status} />
+          <OrderButtons
+            name={product.name}
+            code={product.code}
+            status={product.status}
+          />
 
           <div
             style={SHADE.lemon}
