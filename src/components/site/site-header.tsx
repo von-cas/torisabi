@@ -5,12 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
-import {
-  MESSENGER_URL,
-  FACEBOOK_PROFILE_URL,
-  MessengerIcon,
-} from "@/components/site/messenger";
+import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { NAV_LINKS } from "@/components/site/nav";
+import { SOCIAL_LINKS } from "@/components/site/social";
 import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 import { Wordmark } from "@/components/site/wordmark";
 import { cn } from "@/lib/utils";
@@ -71,6 +68,24 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <nav
+            aria-label="Torisabi elsewhere"
+            className="hidden items-center gap-0.5 lg:flex"
+          >
+            {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Torisabi on ${label}`}
+                className="flex size-9 items-center justify-center rounded-full text-ink/55 transition-colors hover:bg-magenta-soft hover:text-magenta-ink"
+              >
+                <Icon className="size-[1.1rem]" />
+              </a>
+            ))}
+          </nav>
+
           <a
             href={MESSENGER_URL}
             target="_blank"
@@ -130,16 +145,21 @@ export function SiteHeader() {
                 </Link>
               );
             })}
-            <a
-              href={FACEBOOK_PROFILE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              className="flex min-h-13 items-center gap-3 rounded-xl px-2 font-hand text-xl font-bold text-ink"
-            >
-              <MessengerIcon className="size-4 shrink-0 text-magenta" />
-              Facebook
-            </a>
+            <div className="mt-3 flex items-center gap-3 px-2">
+              {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  aria-label={`Torisabi on ${label}`}
+                  className="flex size-11 items-center justify-center rounded-full border-2 border-ink text-ink transition-colors hover:bg-magenta-soft hover:text-magenta-ink"
+                >
+                  <Icon className="size-5" />
+                </a>
+              ))}
+            </div>
             <a
               href={MESSENGER_URL}
               target="_blank"
