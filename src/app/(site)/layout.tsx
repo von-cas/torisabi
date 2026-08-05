@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Script from "next/script";
 
 import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -14,6 +15,15 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <SiteFooter />
+
+      {/* Cloudflare Web Analytics (MASTER-PLAN.md §10, task T1.16). Privacy-first,
+          cookieless. Loaded only on the public site, never the admin. `afterInteractive`
+          so it never delays the first paint. */}
+      <Script
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "cc423271a0614872bbc1e79d9ba57c92"}'
+        strategy="afterInteractive"
+      />
 
       {/* MASTER-PLAN.md §4: ordering stays one tap away on a phone, where the
           header's Order button is collapsed into the menu. */}
