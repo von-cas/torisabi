@@ -11,4 +11,9 @@
   "observability": {
     "enabled": true
   }
+  // No "triggers.crons" here on purpose: the worker @opennextjs/cloudflare
+  // generates exports only `fetch`, with no `scheduled` handler, so a Cron
+  // Trigger would fail at runtime instead of pinging anything. The Supabase
+  // keep-alive is a daily Hermes cron that curls /api/health — see
+  // MASTER-PLAN.md §7.
 }

@@ -4,7 +4,7 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ---
 
-**Build Status (living):** `PHASE 0 — in progress (T0.1, T0.2, T0.4 done)` · Next task: **T0.3** (needs Von: set the Supabase database password and create the project) · Last updated: 2026-08-05
+**Build Status (living):** `PHASE 0 — T0.1–T0.4 done` · Next: **T0.6** deploy, then **T0.7** domain. **T0.5** (two admin accounts + TOTP) needs Von to set the account passwords. Phase 1 UI in progress. · Last updated: 2026-08-05
 
 *This line and the §11 checklist are updated by the builder in every build session, following the protocol at the top of §11. This file is the single source of truth for what is planned, what is built, and what is verified.*
 
@@ -22,7 +22,7 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 | Database, auth, photo storage | Supabase free tier, **Singapore region** (closest to the Philippines) |
 | Admin data access | `supabase-js` directly from admin pages + Row Level Security — no separate backend platform |
 | Hermes automation | API routes secured with an API key: item photo → draft product; later, receipt photo → expense |
-| Keep-alive | Daily Cloudflare Cron Trigger pings `/api/health` so the free Supabase project never pauses |
+| Keep-alive | Daily **Hermes** cron curls `/api/health` so the free Supabase project never pauses (see §7 for why not a Cloudflare Cron Trigger) |
 | Payments | None in v1; provisioned for **PayMongo** (credit cards + GCash + Maya) |
 | Backups | Weekly Hermes cron exports the database and new photos to Google Drive |
 | Analytics | Cloudflare Web Analytics (free, no cookies) |
@@ -229,7 +229,8 @@ Same pattern: receipt photo to Hermes → `POST /api/hermes/expenses` → expens
 
 ### Crons
 
-* **Keep-alive (daily)**: Cloudflare Cron Trigger hits `/api/health` (runs a trivial DB select) so the free Supabase project never hits the 7-day inactivity pause. Runs independently of Hermes uptime.
+* **Keep-alive (daily)**: a Hermes cron curls `/api/health` (which runs a trivial DB select) so the free Supabase project never hits the 7-day inactivity pause.
+  Originally planned as a Cloudflare Cron Trigger, which does not work: the worker `@opennextjs/cloudflare` generates exports only `fetch` and has no `scheduled` handler anywhere in the package, so a Cron Trigger errors at runtime instead of pinging anything. Reaching Cloudflare's scheduler would mean either wrapping the generated worker in a custom entry point or deploying a second standalone worker. Neither is worth it: Hermes already runs the weekly backup cron, and once the site has visitors their traffic keeps the database awake on its own. The accepted trade-off is that the ping depends on Hermes being up; a week of Hermes downtime would also need to coincide with a week of zero site visits before the project paused.
 * **Backup (weekly, Hermes)**: `pg_dump` via the Supabase connection string + copy of new storage photos → Google Drive folder "Torisabi Backups".
 
 The API key lives only in environment secrets (Cloudflare + Hermes). It is never in the repo or this document.
@@ -330,8 +331,8 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
   ✓ 2026-08-05 — `github.com/von-cas/torisabi` (private=true), commit `e8e5969` on `main` confirmed via `gh api`.
 - [x] **T0.2** Next.js scaffold: TypeScript, App Router, Tailwind, shadcn/ui (compact spacing scale). GATE: `npm run dev` serves the starter page locally.
   ✓ 2026-08-05 — Next 16.3.0 + React 19.2.8 + Tailwind 4 + shadcn/ui; `next build` compiled clean; `curl localhost:3000` returned HTTP 200.
-- [ ] **T0.3** Supabase project, **Singapore region**; keys in `.env.local` (git-ignored) + `.env.example` committed without values. GATE: a test query from the app returns data.
-  — 2026-08-05 in progress: creation form filled (name `torisabi`, region Southeast Asia `ap-southeast-1`, "auto-expose new tables" OFF to match the migration's explicit grants, "automatic RLS" ON). Blocked on Von setting the database password and pressing Create. `.env.example` committed.
+- [x] **T0.3** Supabase project, **Singapore region**; keys in `.env.local` (git-ignored) + `.env.example` committed without values. GATE: a test query from the app returns data.
+  ✓ 2026-08-05 — project `torisabi` (`lwzyyikatufzwuoatpvm`) live in `ap-southeast-1`, status Healthy, created with "auto-expose new tables" OFF and "automatic RLS" ON. Migrations 0001 and 0002 applied via the SQL editor ("Success. No rows returned"). `supabase/tests/verify-live.mjs` passed all 8 checks against the real project: anon can query `public_products`, is denied `products`/`orders`/`expenses`/`invoices`, cannot select `cost_centavos`; service role reads `products`; the `product-photos` bucket exists and is public. New-style `sb_publishable_` / `sb_secret_` keys are in `.env.local` (git-ignored), moved via the clipboard so they never entered a transcript.
 - [x] **T0.4** Migration 001: products, product_photos, orders, order_items, invoices, expenses; `public_products` view (no `cost_centavos`); RLS default-deny per §6. GATE: automated probe script — anon reads published products via the view only, is denied everything else (including cost); authenticated admin can CRUD.
   ✓ 2026-08-05 — `supabase/migrations/0001_init.sql` applied with zero errors to a Postgres 17 replica; `supabase/tests/rls_probe.sql` passed all 6 assertions (anon blocked from every base table; cost_centavos absent from the view; drafts and archived hidden; admin CRUD works; order totals exact; codes increment). The probe caught a real bug — `authenticated` had no table grants — now fixed with explicit grants rather than relying on Supabase defaults. Re-run against production is tracked in T1.14.
 - [ ] **T0.5** Auth: two admin users created, public signups disabled, TOTP MFA enrolled on both. GATE: a signup attempt is rejected; login with a wrong TOTP code fails.
@@ -354,7 +355,7 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
 - [ ] **T1.12** `POST /api/hermes/products`: Bearer API key, multipart photos + optional name/price/category, creates a Draft; rate-limited. GATE: curl with the key creates a draft with photos; missing/wrong key gets 401; a rapid burst gets 429.
 - [ ] **T1.13** Hermes VPS flow: Telegram photo (+ caption parsing) → resize to 1600 px + 400 px WebP → endpoint. GATE: a real photo sent on Telegram becomes a Draft with both renditions.
 - [ ] **T1.14** Hardening pass per §10: security headers, Cloudflare rate-limit rule + Bot Fight Mode, secret scan of the full git history, RLS probe re-run against production. GATE: securityheaders.com grade A; the probe script passes in production.
-- [ ] **T1.15** `/api/health` (trivial DB select) + daily Cloudflare Cron Trigger keep-alive. GATE: endpoint returns 200 with a DB round-trip; the trigger has fired at least once in Cloudflare logs.
+- [ ] **T1.15** `/api/health` (trivial DB select) + daily **Hermes** cron keep-alive (not a Cloudflare Cron Trigger — see §7). GATE: endpoint returns 200 with a DB round-trip; the Hermes cron has run at least once against the live URL.
 - [ ] **T1.16** Launch: Cloudflare Web Analytics on; Google Search Console + Bing Webmaster verified; sitemap submitted. GATE: Search Console shows the sitemap as Success.
 - [ ] **ACCEPTANCE P1** — the owner adds a real product end-to-end on her phone (photos → details → publish → sees it live → marks it sold → SOLD appears on the site) without help. GATE: she completes it; any friction becomes new tasks before the phase closes.
 
