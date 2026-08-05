@@ -11,14 +11,15 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ## ▶ START HERE (resume point)
 
-**Status: LIVE at https://www.torisabi.com on Netlify**, verified loading from Von's own home connection with no VPN. Phases 0, 1 and 2 are built; the hosting migration (§12) is done except an optional cleanup. Deploys are continuous from GitHub — pushing to `main` builds and publishes automatically.
+**Status: LIVE at https://www.torisabi.com on Netlify**, redesigned around the real brand (crafter's white worktable, logo from the shop's TikTok, ordering via `ig.me/m/torisabi.ph`). Phases 0, 1 and 2 are built and the hosting migration (§12) is complete. **Deploys are continuous — pushing to `main` auto-builds and publishes** (the repo is public; see T12.8).
 
 **Nothing is blocked on Von right now.**
 
 **The only work left is:**
 - **T1.16** — submit the sitemap to Google Search Console + Bing (needs Von's Google account)
+- **T1.2 gate** — a production Lighthouse run (needs no Von action; can be done any time)
 - **T1.9–T1.12 gates** — admin screens are built and compile; their gates need a signed-in browser pass on a phone
-- **ACCEPTANCE P1** — the owner adds a real product end to end on her phone, unaided
+- **ACCEPTANCE P1** — the owner adds a real product end to end on her phone, unaided (first code will be TS-001)
 - **ACCEPTANCE P2** — one simulated month of orders/expenses matches a hand-check
 
 **How to verify anything at any time:**
@@ -477,11 +478,8 @@ Nothing about Supabase, the schema, the admin, the SEO layer, or the Hermes flow
   ✓ 2026-08-05 — Worker custom domains removed, then `torisabi.com` and `www.torisabi.com` added as CNAMEs to `torisabi.netlify.app`, both **DNS only**. Resolves to Netlify (52.74.6.109 / 13.215.239.219). Certificate took ~2 minutes. **Verified from Von's own machine with no WARP:** all 8 routes 200, apex 301s to www, health `{"ok":true,"db":"up"}`, all 4 products with the SOLD badge and the draft absent, `schema.org/SoldOut` intact, 6 of 6 security headers present. **The access problem is solved.**
 - [x] **T12.6** Delete the Cloudflare Worker `torisabi`. GATE: worker gone; site still loads.
   ✓ 2026-08-05 — `wrangler delete` reported success; `https://www.torisabi.com` still returns 200 with a healthy database. Netlify is now the only thing serving the site.
-- [ ] **T12.8** **Auto-deploy from GitHub is still blocked even after linking the GitHub identity.** Netlify's free Starter plan refuses to build a **private** repo unless the pushing Git contributor is a verified paid team member. Von connected GitHub (`von-cas` now shows under Netlify → connected accounts), but the block persists: `Build blocked: Unrecognized Git contributor.` Confirmed it is not the `Co-Authored-By` trailer (a commit without one was still blocked). This is a paid-plan gate, not a misconfiguration — Netlify only auto-builds private repos for accounts on a team plan.
-  **Two ways forward, Von's call:**
-  1. **Make the repo public** — the cleanest fix, and safe: the repo contains no secrets (`.env.local` is git-ignored, only `.env.example` is tracked, verified against full history). A public repo builds automatically on the free plan. This is an outward-facing change, so it needs Von's explicit yes.
-  2. **Keep deploying by CLI** — `npx netlify deploy --build --prod` works today and is how every deploy so far has shipped. No cost, one command.
-  Until Von decides, deploys are by CLI. GATE: a push to `main` produces a `ready` deploy with no manual step (only reachable via option 1 or a paid plan).
+- [x] **T12.8** Auto-deploy from GitHub. GATE: a push to `main` produces a `ready` deploy with no manual step.
+  ✓ 2026-08-05 — resolved by making the repo **public** (Von approved). Netlify's free plan only auto-builds *private* repos for paid teams; a public repo builds on the free plan. Before flipping it, ran a definitive secret sweep: no sensitive file is tracked (only `.env.example`, values blank), no key value appears anywhere in full git history, and the Supabase URL + anon key were already public in the shipped site's JS anyway — the service-role and Hermes keys live only in env, never the repo. After `gh repo edit --visibility public`, a push built and deployed automatically (`building → ready`), confirmed live. **Deploys are now continuous: push to `main` ships it.**
 - [x] **T12.7** Confirm the Hermes integration survived the move. GATE: a photo still produces a draft.
   ✓ 2026-08-05 — keep-alive ran silent (database awake), cron still scheduled for 09:00 tomorrow, and a photo produced draft **TS-007** which was then deleted. Unaffected as predicted, because both scripts talk to Supabase directly rather than through the site.
 
