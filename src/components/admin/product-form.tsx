@@ -74,6 +74,7 @@ export function ProductForm({
   const [saved, setSaved] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   function fields() {
     const priceCentavos = parsePesoToCentavos(price);
@@ -182,6 +183,41 @@ export function ProductForm({
     } catch (caught) {
       setError(
         caught instanceof Error ? caught.message : "Could not archive this.",
+      );
+      setBusy(false);
+    }
+  }
+
+  /**
+   * Permanent delete. Removes the stored photos first, then the row — the
+   * product_photos rows go with it via ON DELETE CASCADE. Orders that referenced
+   * this product keep their own snapshot of the name, code and price, so past
+   * sales and profit figures are unaffected.
+   */
+  async function destroy() {
+    if (!product) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const supabase = createClient();
+      const { data: files } = await supabase.storage
+        .from("product-photos")
+        .list(product.id);
+      if (files?.length) {
+        await supabase.storage
+          .from("product-photos")
+          .remove(files.map((f) => `${product.id}/${f.name}`));
+      }
+      const { error: deleteError } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", product.id);
+      if (deleteError) throw new Error(deleteError.message);
+      router.push("/admin/products");
+      router.refresh();
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : "Could not delete this.",
       );
       setBusy(false);
     }
@@ -407,17 +443,46 @@ export function ProductForm({
                 Keep it
               </button>
             </>
+          ) : confirmDelete ? (
+            <>
+              <button
+                type="button"
+                onClick={destroy}
+                disabled={busy}
+                className="h-11 rounded-md bg-destructive px-3 text-sm font-medium text-white disabled:opacity-50 md:h-9"
+              >
+                Yes, delete {product.code} forever
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                className="h-11 px-2 text-sm text-muted-foreground md:h-9"
+              >
+                Cancel
+              </button>
+            </>
           ) : (
-            <button
-              type="button"
-              onClick={() => setConfirmArchive(true)}
-              className="h-11 rounded-md border border-border px-3 text-sm text-muted-foreground md:h-9"
-            >
-              Archive
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => setConfirmArchive(true)}
+                className="h-11 rounded-md border border-border px-3 text-sm text-muted-foreground md:h-9"
+              >
+                Archive
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="h-11 rounded-md px-3 text-sm text-destructive hover:bg-destructive/10 md:h-9"
+              >
+                Delete
+              </button>
+            </>
           )}
           <span className="text-[11px] text-muted-foreground">
-            Archiving hides it everywhere. Nothing is deleted.
+            {confirmDelete
+              ? "This removes the product and its photos permanently. Past orders keep their own record."
+              : "Archive hides it and keeps it. Delete removes it for good."}
           </span>
         </div>
       ) : null}

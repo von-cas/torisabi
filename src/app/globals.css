@@ -151,4 +151,34 @@
   html {
     @apply font-sans;
   }
+
+  /* Tailwind v4 dropped the old preflight rule that gave buttons a pointer
+     cursor, so every button and control looked unclickable. Put it back for
+     anything the user can actually act on. */
+  button,
+  [role="button"],
+  a[href],
+  summary,
+  label[for],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="submit"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled,
+  [aria-disabled="true"],
+  [data-disabled] {
+    cursor: not-allowed;
+  }
+
+  /* The file input's inner button needs its own rule in WebKit. */
+  ::file-selector-button {
+    cursor: pointer;
+  }
 }
