@@ -143,12 +143,12 @@ export default async function HomePage() {
           <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 text-center font-hand text-lg font-bold text-ink sm:text-xl">
             {PROMISES.map((promise, index) => (
               <span key={promise} className="inline-flex items-center gap-3">
-                {index > 0 && (
+                {promise}
+                {index < PROMISES.length - 1 && (
                   <span aria-hidden="true" className="text-ink/40">
                     ·
                   </span>
                 )}
-                {promise}
               </span>
             ))}
           </p>

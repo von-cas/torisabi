@@ -195,8 +195,8 @@
   .marker {
     background-image: linear-gradient(var(--lemon), var(--lemon));
     background-repeat: no-repeat;
-    background-size: 100% 0.36em;
-    background-position: 0 86%;
+    background-size: 100% 0.3em;
+    background-position: 0 64%;
   }
 
   @media (prefers-reduced-motion: reduce) {

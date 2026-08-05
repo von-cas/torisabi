@@ -95,9 +95,13 @@ export default async function ProductsPage({
         lead="Everything I have made, including the pieces that already went home with someone. Prices are in Philippine pesos."
       />
 
-      <div className="mt-10">
-        <ProductFilters categories={categories} query={query} />
-      </div>
+      {/* An empty shelf has nothing to filter, so the controls stay out of the
+          way — unless a filter is what emptied it. */}
+      {(products.length > 0 || isFiltered) && (
+        <div className="mt-10">
+          <ProductFilters categories={categories} query={query} />
+        </div>
+      )}
 
       {products.length > 0 ? (
         <>
