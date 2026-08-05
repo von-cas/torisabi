@@ -11,15 +11,11 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ## ▶ START HERE (resume point)
 
-**Status:** the whole app is built and was live on Cloudflare. **Migrating hosting to Netlify** (see §12) because Von's home connection cannot reach the Cloudflare IPs. Everything else — database, admin, Hermes, SEO — is done and unaffected.
+**Status: LIVE at https://www.torisabi.com on Netlify**, verified loading from Von's own home connection with no VPN. Phases 0, 1 and 2 are built; the hosting migration (§12) is done except an optional cleanup. Deploys are continuous from GitHub — pushing to `main` builds and publishes automatically.
 
-**Blocked on Von, in order:**
+**Nothing is blocked on Von right now.**
 
-1. **Log in to Netlify** — run `npx netlify login` in `/Users/von/torisabi` and approve in the browser. (Account creation and login are Von's to do; the agent does not handle credentials.) Then tell the agent, which finishes §12 unattended.
-
-**Next agent actions once unblocked (all in §12):** create the Netlify site, set the five environment variables, deploy, repoint DNS to Netlify **unproxied**, verify, then delete the Cloudflare Worker.
-
-**Then the only work left is:**
+**The only work left is:**
 - **T1.16** — submit the sitemap to Google Search Console + Bing (needs Von's Google account)
 - **T1.9–T1.12 gates** — admin screens are built and compile; their gates need a signed-in browser pass on a phone
 - **ACCEPTANCE P1** — the owner adds a real product end to end on her phone, unaided
@@ -448,12 +444,15 @@ Nothing about Supabase, the schema, the admin, the SEO layer, or the Hermes flow
   ✓ 2026-08-05 — `www.netlify.com` 200, `app.netlify.com` 200, and two real Netlify-hosted sites 200/301. The 30-second check that justified the migration.
 - [x] **T12.2** Swap the adapter: add `@netlify/plugin-nextjs` + `netlify.toml`, drop `@opennextjs/cloudflare`, `wrangler`, `wrangler.jsonc`, `open-next.config.ts`, `public/_headers`, and the `initOpenNextCloudflareForDev()` hook. GATE: `npm run build` succeeds with no Cloudflare references left.
   ✓ 2026-08-05 — build clean, all 26 routes present; `deploy` script is now `netlify deploy --build --prod`.
-- [ ] **T12.3** Netlify account + `npx netlify login`, then `netlify sites:create`. **Needs Von** for the login itself. GATE: `npx netlify status` shows a linked site.
-- [ ] **T12.4** Set the five environment variables on the site and deploy. GATE: the `*.netlify.app` URL serves the gallery with all 4 demo products, the SOLD badge on the lamp, and `/api/health` returning `{"ok":true,"db":"up"}`.
-  Variables (values from `.env.local`, never committed): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `HERMES_API_KEY`, and `NEXT_PUBLIC_SITE_URL=https://www.torisabi.com`.
-- [ ] **T12.5** Repoint DNS. The domain stays registered at Cloudflare; the records must be **unproxied (grey cloud)** or traffic returns to the Cloudflare IPs and the whole migration is undone. GATE: `dig www.torisabi.com` resolves to Netlify, and `https://www.torisabi.com` loads **from Von's own machine without WARP**.
-- [ ] **T12.6** Clean up: delete the Cloudflare Worker `torisabi` and its two custom domains, so there is one live deployment and no ambiguity about which serves the site. GATE: `npx wrangler deployments list` shows the worker gone; the site still loads.
-- [ ] **T12.7** Update `hermes/README.md` and the `torisabi-products` skill if any URL changed. The Hermes scripts talk to Supabase directly, so they are expected to need no change — confirm rather than assume. GATE: a photo still produces a draft after the move.
+- [x] **T12.3** Netlify account + login, then create the site. GATE: `npx netlify status` shows a linked site.
+  ✓ 2026-08-05 — logged in as Von Castro, team Torisabi; site `torisabi` created (`124d9e4e-c35f-42ea-ad4e-d3f2acadacde`). **Continuous deployment from GitHub is connected**, so pushes to `main` now build and deploy themselves — no manual deploy step.
+- [x] **T12.4** Set the five environment variables and deploy. GATE: the Netlify URL serves the gallery with all 4 demo products, the SOLD badge, and a healthy `/api/health`.
+  ✓ 2026-08-05 — all five set, deployed, verified. **Two traps worth remembering:** (1) new Netlify sites had **SSO protection on by default**, returning 401 on every route until `sso_login` was set false; (2) `netlify env:set --secret` marks a variable secret, and **Netlify withholds secrets from the build** — fine for server-only keys, fatal for `NEXT_PUBLIC_*`, which Next must inline at build time. The app booted with an invalid Supabase URL until both public vars were recreated as normal variables.
+- [x] **T12.5** Repoint DNS, records **unproxied (grey cloud)** or traffic returns to the Cloudflare IPs. GATE: `https://www.torisabi.com` loads **from Von's own machine without WARP**.
+  ✓ 2026-08-05 — Worker custom domains removed, then `torisabi.com` and `www.torisabi.com` added as CNAMEs to `torisabi.netlify.app`, both **DNS only**. Resolves to Netlify (52.74.6.109 / 13.215.239.219). Certificate took ~2 minutes. **Verified from Von's own machine with no WARP:** all 8 routes 200, apex 301s to www, health `{"ok":true,"db":"up"}`, all 4 products with the SOLD badge and the draft absent, `schema.org/SoldOut` intact, 6 of 6 security headers present. **The access problem is solved.**
+- [ ] **T12.6** Delete the Cloudflare Worker `torisabi`. Deliberately deferred: it now has no custom domains and serves nothing, so it is harmless, and keeping it a few days is a free rollback path while Netlify beds in. GATE: worker gone; site still loads.
+- [x] **T12.7** Confirm the Hermes integration survived the move. GATE: a photo still produces a draft.
+  ✓ 2026-08-05 — keep-alive ran silent (database awake), cron still scheduled for 09:00 tomorrow, and a photo produced draft **TS-007** which was then deleted. Unaffected as predicted, because both scripts talk to Supabase directly rather than through the site.
 
 ---
 
