@@ -4,7 +4,7 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ---
 
-**Build Status (living):** `PLANNING — build not started` · Next task: **T0.1** · Last updated: 2026-08-05
+**Build Status (living):** `PHASE 0 — in progress (T0.1, T0.2, T0.4 done)` · Next task: **T0.3** (needs Von: set the Supabase database password and create the project) · Last updated: 2026-08-05
 
 *This line and the §11 checklist are updated by the builder in every build session, following the protocol at the top of §11. This file is the single source of truth for what is planned, what is built, and what is verified.*
 
@@ -326,10 +326,14 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
 
 ### Phase 0 — Foundations (~half a day)
 
-- [ ] **T0.1** Private GitHub repo; `git init` in `/Users/von/torisabi`; first commit (this plan + scaffold). GATE: commit visible on the remote.
-- [ ] **T0.2** Next.js scaffold: TypeScript, App Router, Tailwind, shadcn/ui (compact spacing scale). GATE: `npm run dev` serves the starter page locally.
+- [x] **T0.1** Private GitHub repo; `git init` in `/Users/von/torisabi`; first commit (this plan + scaffold). GATE: commit visible on the remote.
+  ✓ 2026-08-05 — `github.com/von-cas/torisabi` (private=true), commit `e8e5969` on `main` confirmed via `gh api`.
+- [x] **T0.2** Next.js scaffold: TypeScript, App Router, Tailwind, shadcn/ui (compact spacing scale). GATE: `npm run dev` serves the starter page locally.
+  ✓ 2026-08-05 — Next 16.3.0 + React 19.2.8 + Tailwind 4 + shadcn/ui; `next build` compiled clean; `curl localhost:3000` returned HTTP 200.
 - [ ] **T0.3** Supabase project, **Singapore region**; keys in `.env.local` (git-ignored) + `.env.example` committed without values. GATE: a test query from the app returns data.
-- [ ] **T0.4** Migration 001: products, product_photos, orders, order_items, invoices, expenses; `public_products` view (no `cost_centavos`); RLS default-deny per §6. GATE: automated probe script — anon reads published products via the view only, is denied everything else (including cost); authenticated admin can CRUD.
+  — 2026-08-05 in progress: creation form filled (name `torisabi`, region Southeast Asia `ap-southeast-1`, "auto-expose new tables" OFF to match the migration's explicit grants, "automatic RLS" ON). Blocked on Von setting the database password and pressing Create. `.env.example` committed.
+- [x] **T0.4** Migration 001: products, product_photos, orders, order_items, invoices, expenses; `public_products` view (no `cost_centavos`); RLS default-deny per §6. GATE: automated probe script — anon reads published products via the view only, is denied everything else (including cost); authenticated admin can CRUD.
+  ✓ 2026-08-05 — `supabase/migrations/0001_init.sql` applied with zero errors to a Postgres 17 replica; `supabase/tests/rls_probe.sql` passed all 6 assertions (anon blocked from every base table; cost_centavos absent from the view; drafts and archived hidden; admin CRUD works; order totals exact; codes increment). The probe caught a real bug — `authenticated` had no table grants — now fixed with explicit grants rather than relying on Supabase defaults. Re-run against production is tracked in T1.14.
 - [ ] **T0.5** Auth: two admin users created, public signups disabled, TOTP MFA enrolled on both. GATE: a signup attempt is rejected; login with a wrong TOTP code fails.
 - [ ] **T0.6** Deploy pipeline: OpenNext Cloudflare adapter; first deploy to a workers.dev URL. GATE: the deployed URL renders the app.
 - [ ] **T0.7** torisabi.com bound to the app; apex→www 301 redirect rule; HTTPS. The domain is already registered via Cloudflare Registrar (2026-08-05, ₱731.01) so the Cloudflare account and DNS zone exist — this task is binding + redirects only. GATE: `curl -I` on `http://torisabi.com`, `https://torisabi.com`, and `http://www.torisabi.com` each 301 to `https://www.torisabi.com`, which returns 200.
