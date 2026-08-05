@@ -1,6 +1,11 @@
-# Torisabi Website Master Plan (v2.3)
+# Torisabi Website Master Plan (v3.0)
 
-Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js + Supabase, business tracking (orders, invoices, expenses) moved from spreadsheets into the admin dashboard, Hermes photo-to-product automation added, payment provisioning added. v2.1: SEO plan + www canonical redirect, admin stays at `/admin` (no subdomain), profit reports with date ranges + item cost price, security hardening, live SOLD sync between admin and frontend. v2.2: compact all-in-one admin UI spec, gated build checklist with builder protocol (§11), living Build Status line, `public_products` view + audit log added to the data model. v2.3: opening expense #1 recorded (domain ₱731.01, task T2.3b), No-Over-Engineering + Proportional-Verification build principles embedded in §11.
+**This file is the single source of truth for the build.** It records every decision, every task, and the evidence behind each completed one. A new session can start cold by reading the START HERE block below. The builder protocol in §11 governs how tasks get checked off.
+
+---
+
+
+Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js + Supabase, business tracking (orders, invoices, expenses) moved from spreadsheets into the admin dashboard, Hermes photo-to-product automation added, payment provisioning added. v2.1: SEO plan + www canonical redirect, admin stays at `/admin` (no subdomain), profit reports with date ranges + item cost price, security hardening, live SOLD sync between admin and frontend. v2.2: compact all-in-one admin UI spec, gated build checklist with builder protocol (§11), living Build Status line, `public_products` view + audit log added to the data model. v2.3: opening expense #1 recorded (domain ₱731.01, task T2.3b), No-Over-Engineering + Proportional-Verification build principles embedded in §11. **v3.0 (2026-08-05): the app was built, deployed and verified live; hosting is moving from Cloudflare to Netlify (§12); evidence recorded against every completed gate.**
 
 ---
 
