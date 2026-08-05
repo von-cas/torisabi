@@ -6,7 +6,11 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 **Build Status (living):** `LIVE at https://www.torisabi.com` — **Phase 0 complete.** Phase 1 complete except the admin gates that need a signed-in browser session (T1.9–T1.12) and launch items (T1.16). Phase 2 built and arithmetic-verified. Hermes photo→draft and the keep-alive cron are working. **Next:** ACCEPTANCE P1 — the owner adds a real product end to end on her phone. · Last updated: 2026-08-05
 
-> **Known environment issue, not a site fault:** Von's home DSL (PLDT) cannot open TCP 443 to the Cloudflare anycast IPs serving this zone (104.21.78.180 / 172.67.136.40); port 80 works and other Cloudflare hosts work. Verified from outside the network that HTTPS serves correctly. To reach the live site from home, use mobile data, a VPN, or Cloudflare WARP.
+> **Known environment issue, not a site fault — affects only Von's household, never customers.**
+> From Von's home connection, TCP port **443** to the two Cloudflare IPs serving this zone (104.21.78.180, 172.67.136.40) never completes, while on the *same IP* ICMP pings return 0% loss and TCP port **80** connects normally. Other Cloudflare IPs answer on 443 fine, and the site serves correctly when fetched from outside the network.
+> ICMP fine + port 80 fine + port 443 dropped, on one IP, is the signature of **ISP-level filtering of HTTPS to that destination**, not routing, congestion, or anything in this codebase. The likely cause is collateral damage: some unrelated site sharing that Cloudflare anycast IP is on a blocklist, and the block is enforced by IP.
+> Cloudflare returns only these two IPs from every resolver tested, so there is no alternate address to fall back to. Whether it clears depends on the ISP's list, not on anything we control.
+> **Workaround for the household:** Cloudflare WARP (free) on each device, or mobile data. Customers on other networks are unaffected.
 
 *This line and the §11 checklist are updated by the builder in every build session, following the protocol at the top of §11. This file is the single source of truth for what is planned, what is built, and what is verified.*
 
