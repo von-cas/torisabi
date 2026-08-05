@@ -8,6 +8,7 @@ import {
   MessengerIcon,
 } from "@/components/site/messenger";
 import { NAV_LINKS } from "@/components/site/nav";
+import { SOCIAL_LINKS } from "@/components/site/social";
 import { Wordmark } from "@/components/site/wordmark";
 
 export function SiteFooter() {
@@ -26,6 +27,25 @@ export function SiteFooter() {
             <Strawberry className="mt-0.5 size-5 shrink-0" />
             Free shipping on orders over ₱3,000
           </p>
+
+          <div>
+            <h2 className="font-hand text-lg font-bold">Follow along</h2>
+            <ul className="mt-2 flex items-center gap-3">
+              {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Torisabi on ${label}`}
+                    className="flex size-10 items-center justify-center rounded-full border-2 border-ink text-ink transition-colors hover:bg-magenta-soft hover:text-magenta-ink"
+                  >
+                    <Icon className="size-5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div>

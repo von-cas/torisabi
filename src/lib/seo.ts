@@ -1,4 +1,9 @@
 import { centavosToInput } from "@/lib/money";
+import {
+  FACEBOOK_PROFILE_URL,
+  INSTAGRAM_URL,
+  TIKTOK_URL,
+} from "@/lib/social";
 import type { ProductStatus, ProductWithPhotos } from "@/lib/types";
 
 /**
@@ -19,10 +24,6 @@ const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(
   /\/+$/,
   "",
 );
-
-const FACEBOOK_URL = `https://www.facebook.com/people/Torisabi-Ph/${
-  process.env.NEXT_PUBLIC_FACEBOOK_ID ?? "61563228086384"
-}/`;
 
 /** Public bucket created in supabase/migrations/0001_init.sql. */
 const PHOTO_BUCKET = "product-photos";
@@ -96,7 +97,7 @@ export function organizationJsonLd() {
     name: "Torisabi",
     url: absoluteUrl("/"),
     logo: absoluteUrl(LOGO_PATH),
-    sameAs: [FACEBOOK_URL],
+    sameAs: [FACEBOOK_PROFILE_URL, INSTAGRAM_URL, TIKTOK_URL],
   };
 }
 

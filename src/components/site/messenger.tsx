@@ -1,6 +1,8 @@
 /**
- * Facebook Messenger is the whole ordering channel. The link and the profile
- * live in one place so a single button everywhere opens the same chat.
+ * Facebook Messenger is the whole ordering channel — a single button everywhere
+ * opens the same chat. The URLs live in `@/lib/social` (the one place every
+ * Torisabi profile is defined) and are re-exported here so existing importers
+ * keep working.
  *
  * `m.me/<id>` opens the Messenger thread to Torisabi Ph directly — the app on a
  * phone, the web composer on a laptop. Note: neither Messenger nor Facebook
@@ -8,11 +10,11 @@
  * product name + code shown on the page are what the customer references.
  */
 
-const PROFILE_ID = process.env.NEXT_PUBLIC_FACEBOOK_ID ?? "61563228086384";
-
-export const MESSENGER_URL = `https://m.me/${PROFILE_ID}`;
-export const FACEBOOK_PROFILE_URL = `https://www.facebook.com/people/Torisabi-Ph/${PROFILE_ID}/`;
-export const FACEBOOK_LABEL = "Torisabi Ph";
+export {
+  MESSENGER_URL,
+  FACEBOOK_PROFILE_URL,
+  FACEBOOK_LABEL,
+} from "@/lib/social";
 
 /** Facebook Messenger glyph. */
 export function MessengerIcon({ className }: { className?: string }) {
