@@ -5,7 +5,7 @@
  */
 
 export const INSTAGRAM_USERNAME =
-  process.env.NEXT_PUBLIC_INSTAGRAM_USERNAME ?? "torisabi";
+  process.env.NEXT_PUBLIC_INSTAGRAM_USERNAME ?? "torisabi.ph";
 
 export const INSTAGRAM_DM_URL = `https://ig.me/m/${INSTAGRAM_USERNAME}`;
 export const INSTAGRAM_PROFILE_URL = `https://instagram.com/${INSTAGRAM_USERNAME}`;
