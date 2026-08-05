@@ -4,13 +4,34 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ---
 
-**Build Status (living):** `LIVE at https://www.torisabi.com` — **Phase 0 complete.** Phase 1 complete except the admin gates that need a signed-in browser session (T1.9–T1.12) and launch items (T1.16). Phase 2 built and arithmetic-verified. Hermes photo→draft and the keep-alive cron are working. **Next:** ACCEPTANCE P1 — the owner adds a real product end to end on her phone. · Last updated: 2026-08-05
+## ▶ START HERE (resume point)
 
-> **Known environment issue, not a site fault — affects only Von's household, never customers.**
-> From Von's home connection, TCP port **443** to the two Cloudflare IPs serving this zone (104.21.78.180, 172.67.136.40) never completes, while on the *same IP* ICMP pings return 0% loss and TCP port **80** connects normally. Other Cloudflare IPs answer on 443 fine, and the site serves correctly when fetched from outside the network.
-> ICMP fine + port 80 fine + port 443 dropped, on one IP, is the signature of **ISP-level filtering of HTTPS to that destination**, not routing, congestion, or anything in this codebase. The likely cause is collateral damage: some unrelated site sharing that Cloudflare anycast IP is on a blocklist, and the block is enforced by IP.
-> Cloudflare returns only these two IPs from every resolver tested, so there is no alternate address to fall back to. Whether it clears depends on the ISP's list, not on anything we control.
-> **Workaround for the household:** Cloudflare WARP (free) on each device, or mobile data. Customers on other networks are unaffected.
+**Status:** the whole app is built and was live on Cloudflare. **Migrating hosting to Netlify** (see §12) because Von's home connection cannot reach the Cloudflare IPs. Everything else — database, admin, Hermes, SEO — is done and unaffected.
+
+**Blocked on Von, in order:**
+
+1. **Log in to Netlify** — run `npx netlify login` in `/Users/von/torisabi` and approve in the browser. (Account creation and login are Von's to do; the agent does not handle credentials.) Then tell the agent, which finishes §12 unattended.
+
+**Next agent actions once unblocked (all in §12):** create the Netlify site, set the five environment variables, deploy, repoint DNS to Netlify **unproxied**, verify, then delete the Cloudflare Worker.
+
+**Then the only work left is:**
+- **T1.16** — submit the sitemap to Google Search Console + Bing (needs Von's Google account)
+- **T1.9–T1.12 gates** — admin screens are built and compile; their gates need a signed-in browser pass on a phone
+- **ACCEPTANCE P1** — the owner adds a real product end to end on her phone, unaided
+- **ACCEPTANCE P2** — one simulated month of orders/expenses matches a hand-check
+
+**How to verify anything at any time:**
+```bash
+node supabase/tests/verify-live.mjs     # 8 security + connectivity checks against the live database
+npm run build                            # full typecheck + build
+node scripts/seed-demo.mjs               # reseed demo products (--clean to remove)
+```
+
+Last updated: 2026-08-05
+
+> **Why hosting moved off Cloudflare (2026-08-05).** From Von's home connection, TCP port **443** to the two Cloudflare IPs serving this zone (104.21.78.180, 172.67.136.40) never completed — 0/6 attempts even at a 30-second timeout — while on the *same IP* ICMP returned 0% loss and port **80** connected. Neighbouring Cloudflare IPs answered on 443 normally, and 15 of 15 international nodes fetched the site fine.
+> That pattern (ICMP fine, port 80 fine, port 443 dropped, single IPs) is HTTPS filtering by a middlebox, not routing or congestion, and most likely collateral damage from an IP-based blocklist entry aimed at some unrelated site sharing that anycast address.
+> **It could not be established whether other PLDT customers were affected** — no public checker has a Philippine node, and Von had no second PLDT line to test. Carrying an unquantified risk that some share of Philippine customers cannot reach the shop was not acceptable, so the site moved to Netlify, whose edge is reachable from that connection and which uses entirely different IP ranges. See §12.
 
 *This line and the §11 checklist are updated by the builder in every build session, following the protocol at the top of §11. This file is the single source of truth for what is planned, what is built, and what is verified.*
 
@@ -20,10 +41,11 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 | Area | Decision |
 |---|---|
-| Hosting | Cloudflare free tier (commercial use allowed) |
-| Canonical URL | **`https://www.torisabi.com`** — apex `torisabi.com` 301-redirects to www (Cloudflare redirect rule) |
+| Hosting | **Netlify free tier** (commercial use allowed). Was Cloudflare Workers until 2026-08-05 — see §12 for why it moved. Domain stays registered at Cloudflare; DNS records point to Netlify **unproxied**. |
+| Canonical URL | **`https://www.torisabi.com`** — apex `torisabi.com` 301-redirects to www, done in `src/middleware.ts` so it is version-controlled |
 | Admin location | **`/admin` path** in the same app — no subdomain (reasons in §10 Security) |
 | Admin UI | Compact all-in-one dashboard (§5): dense tables on desktop, bottom-tab compact cards on mobile |
+| Framework (adapter) | `@netlify/plugin-nextjs` — replaced `@opennextjs/cloudflare` on 2026-08-05 |
 | Framework | Next.js deployed with the OpenNext Cloudflare adapter — one app serves the public site, the admin dashboard, and the API |
 | Database, auth, photo storage | Supabase free tier, **Singapore region** (closest to the Philippines) |
 | Admin data access | `supabase-js` directly from admin pages + Row Level Security — no separate backend platform |
@@ -344,9 +366,9 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
 - [x] **T0.5** Auth: admin account created, public signups disabled, TOTP MFA enrolled. GATE: signups rejected; MFA active on the account.
   ✓ 2026-08-05 — public signups disabled and TOTP enabled in the Supabase dashboard (AAL1 session limiting on). One shared account (`nariokristinebernadette@…`), email confirmed, signed in 11:21, **TOTP factor enrolled and `status: verified` at 11:22** via the `/admin/security` screen. Note for future checks: `auth.admin.listUsers()` omits factors — use `auth.admin.mfa.listFactors({userId})` or `getUserById`, or you will wrongly conclude MFA is missing.
 - [x] **T0.6** Deploy pipeline: OpenNext Cloudflare adapter; first deploy to a workers.dev URL. GATE: the deployed URL renders the app.
-  ✓ 2026-08-05 — deployed to Cloudflare Workers; 26 routes built clean. Verified all routes returning 200 across 4 consecutive runs. Worker logs show `outcome: ok`, no exceptions, colo SIN. Runtime secrets `SUPABASE_SERVICE_ROLE_KEY` and `HERMES_API_KEY` set via `wrangler secret put` and confirmed on the worker.
+  ✓ 2026-08-05 on **Cloudflare** — 26 routes built clean, all returning 200 across 4 consecutive runs, worker logs `outcome: ok`, colo SIN. **Superseded by §12 (T12.4)**, which redoes the deploy on Netlify.
 - [x] **T0.7** torisabi.com bound to the app; apex→www 301 redirect; HTTPS. GATE: `http://torisabi.com`, `https://torisabi.com`, and `http://www.torisabi.com` each 301 to `https://www.torisabi.com`, which returns 200.
-  ✓ 2026-08-05 — both hostnames bound as Cloudflare custom domains; edge certificates Active. `http://torisabi.com` → `301 https://www.torisabi.com/`. The redirect lives in `src/middleware.ts` rather than a dashboard rule, so it is version-controlled and preserves path and query. Verified from outside Von's network (his ISP cannot reach these IPs on 443 — see the note at the top of this file): the apex serves the homepage and every product link resolves to the www host.
+  ✓ 2026-08-05 on **Cloudflare** — `http://torisabi.com` → `301 https://www.torisabi.com/`, verified from outside Von's network. The redirect lives in `src/middleware.ts` rather than a dashboard rule, so it is version-controlled and **survives the hosting move unchanged**. **DNS is redone in §12 (T12.5)** to point at Netlify.
 
 ### Phase 1 — Public site + product admin (~2 days)
 
@@ -411,7 +433,26 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
 
 ---
 
-## 12. Final Scope
+## 12. Hosting migration: Cloudflare → Netlify (in progress)
+
+Why: see the note under START HERE. Short version — Von's home connection cannot open port 443 to the two Cloudflare IPs serving this domain, it could not be established whether other Philippine customers hit the same wall, and an unquantified reachability risk on a customer-facing shop is not worth carrying. Netlify's edge is reachable from that connection, its free tier permits commercial use (Vercel's Hobby tier does not), and it runs on unrelated IP ranges.
+
+Nothing about Supabase, the schema, the admin, the SEO layer, or the Hermes flow changes. This is a hosting swap only.
+
+- [x] **T12.1** Confirm Netlify is reachable from Von's connection before doing any work. GATE: HTTPS to Netlify hosts returns 200 from his machine.
+  ✓ 2026-08-05 — `www.netlify.com` 200, `app.netlify.com` 200, and two real Netlify-hosted sites 200/301. The 30-second check that justified the migration.
+- [x] **T12.2** Swap the adapter: add `@netlify/plugin-nextjs` + `netlify.toml`, drop `@opennextjs/cloudflare`, `wrangler`, `wrangler.jsonc`, `open-next.config.ts`, `public/_headers`, and the `initOpenNextCloudflareForDev()` hook. GATE: `npm run build` succeeds with no Cloudflare references left.
+  ✓ 2026-08-05 — build clean, all 26 routes present; `deploy` script is now `netlify deploy --build --prod`.
+- [ ] **T12.3** Netlify account + `npx netlify login`, then `netlify sites:create`. **Needs Von** for the login itself. GATE: `npx netlify status` shows a linked site.
+- [ ] **T12.4** Set the five environment variables on the site and deploy. GATE: the `*.netlify.app` URL serves the gallery with all 4 demo products, the SOLD badge on the lamp, and `/api/health` returning `{"ok":true,"db":"up"}`.
+  Variables (values from `.env.local`, never committed): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `HERMES_API_KEY`, and `NEXT_PUBLIC_SITE_URL=https://www.torisabi.com`.
+- [ ] **T12.5** Repoint DNS. The domain stays registered at Cloudflare; the records must be **unproxied (grey cloud)** or traffic returns to the Cloudflare IPs and the whole migration is undone. GATE: `dig www.torisabi.com` resolves to Netlify, and `https://www.torisabi.com` loads **from Von's own machine without WARP**.
+- [ ] **T12.6** Clean up: delete the Cloudflare Worker `torisabi` and its two custom domains, so there is one live deployment and no ambiguity about which serves the site. GATE: `npx wrangler deployments list` shows the worker gone; the site still loads.
+- [ ] **T12.7** Update `hermes/README.md` and the `torisabi-products` skill if any URL changed. The Hermes scripts talk to Supabase directly, so they are expected to need no change — confirm rather than assume. GATE: a photo still produces a draft after the move.
+
+---
+
+## 13. Final Scope
 
 The first Torisabi website is a polished product catalog and portfolio. Customers browse on the website and order through Instagram DMs. The owner manages products, orders, invoices, and expenses in one admin dashboard, adds new items by sending a photo to Hermes, and sees profit for any date range at a glance. Sold items stay on the site as social proof and keep earning search traffic.
 
