@@ -7,6 +7,7 @@ import { OrderButtons } from "@/components/site/order-buttons";
 import { ProductPhotos } from "@/components/site/product-photos";
 import { safeGetProductBySlug } from "@/components/site/safe-queries";
 import { StatusBadge } from "@/components/site/status-badge";
+import { SHADE } from "@/components/site/sticker";
 import { formatPeso } from "@/lib/money";
 import {
   breadcrumbJsonLd,
@@ -79,21 +80,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
         ])}
       />
 
-      <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+      <nav aria-label="Breadcrumb" className="text-sm text-ink/60">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li>
-            <Link href="/" className="hover:text-foreground">
+            <Link href="/" className="hover:text-magenta-ink">
               Home
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/products" className="hover:text-foreground">
-              Products
+            <Link href="/products" className="hover:text-magenta-ink">
+              The shelf
             </Link>
           </li>
           <li aria-hidden="true">/</li>
-          <li className="text-foreground">{product.name}</li>
+          <li className="text-ink">{product.name}</li>
         </ol>
       </nav>
 
@@ -105,34 +106,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
 
         <div className="space-y-6">
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={product.status} />
-              <span className="text-xs uppercase tracking-widest text-muted-foreground">
+              {/* The code is how a piece gets named in the DM, so it is set
+                  like the stamp on a stock tag. */}
+              <span className="inline-flex items-center rounded-full bg-ink px-2.5 py-1 font-mono text-xs font-medium tracking-wider text-paper">
                 {product.code}
               </span>
               {product.category && (
                 <Link
                   href={`/products?category=${encodeURIComponent(product.category)}`}
-                  className="text-xs uppercase tracking-widest text-brand hover:underline"
+                  className="inline-flex items-center rounded-full border-2 border-ink px-2.5 py-0.5 text-xs font-semibold text-ink hover:bg-magenta-soft"
                 >
                   {product.category}
                 </Link>
               )}
             </div>
 
-            <h1 className="text-3xl font-semibold tracking-tight break-words sm:text-4xl">
+            <h1 className="font-hand text-4xl leading-[1.05] font-extrabold tracking-tight break-words text-ink sm:text-5xl">
               {product.name}
             </h1>
 
-            <p className="flex flex-wrap items-baseline gap-2">
-              <span className="text-2xl font-semibold sm:text-3xl">
+            <p className="flex flex-wrap items-baseline gap-3">
+              <span className="text-3xl font-bold text-ink">
                 {formatPeso(
                   product.discounted_price_centavos ?? product.price_centavos,
                 )}
               </span>
               {hasDiscount && (
-                <span className="text-base text-muted-foreground line-through">
+                <span className="text-lg text-ink/50 line-through">
                   {formatPeso(product.price_centavos)}
                 </span>
               )}
@@ -140,19 +143,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           {product.description && (
-            <p className="whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="leading-relaxed break-words whitespace-pre-line text-ink/75">
               {product.description}
             </p>
           )}
 
           {product.variations.length > 0 && (
             <div className="space-y-2">
-              <h2 className="text-sm font-medium">Variations</h2>
+              <h2 className="font-hand text-lg font-bold text-ink">
+                Comes in
+              </h2>
               <ul className="flex flex-wrap gap-2">
                 {product.variations.map((variation) => (
                   <li
                     key={variation}
-                    className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground"
+                    className="inline-flex items-center rounded-full border-2 border-ink bg-paper px-3 py-1 text-sm font-semibold text-ink"
                   >
                     {variation}
                   </li>
@@ -167,33 +172,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
             status={product.status}
           />
 
-          <div className="rounded-xl border border-border bg-secondary/40 p-4 text-sm leading-relaxed text-muted-foreground">
-            <p className="font-medium text-foreground">Shipping</p>
+          <div
+            style={SHADE.lemon}
+            className="sticker rounded-2xl p-5 leading-relaxed text-ink/75"
+          >
+            <p className="font-hand text-lg font-bold text-ink">
+              Getting it to you
+            </p>
             <p className="mt-1">
-              Shipping fees depend on your delivery address and are confirmed in
-              the DM before any payment. Free shipping for orders worth ₱3,000 or
-              more.
+              The courier fee depends on your address, and I always confirm it
+              in the DM before you pay anything. Orders over ₱3,000 ship free.
             </p>
             <Link
               href="/shipping"
-              className="mt-2 inline-flex font-medium text-brand hover:underline"
+              className="mt-2 inline-flex font-semibold text-magenta-ink hover:underline"
             >
-              Shipping details
+              Shipping details →
             </Link>
           </div>
 
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            An inquiry does not reserve a product. An order is confirmed only
-            after we approve it and receive payment.
+          <p className="text-sm leading-relaxed text-ink/60">
+            Asking about a piece does not reserve it. An order is confirmed once
+            I approve it and payment is in.
           </p>
         </div>
       </div>
 
       <Link
         href="/products"
-        className="mt-12 inline-flex text-sm font-medium text-brand hover:underline"
+        className="mt-12 inline-flex font-semibold text-magenta-ink hover:underline"
       >
-        ← Back to all products
+        ← Back to the shelf
       </Link>
     </div>
   );

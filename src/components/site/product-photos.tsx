@@ -3,7 +3,8 @@
 import { useState } from "react";
 
 import { ProductImage } from "@/components/site/product-image";
-import { SoldOverlay } from "@/components/site/status-badge";
+import { SHADE } from "@/components/site/sticker";
+import { SoldStamp } from "@/components/site/status-badge";
 import type { ProductPhoto } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -20,21 +21,21 @@ export function ProductPhotos({
   const current = photos[active];
 
   return (
-    <div className="space-y-3">
-      <div className="relative">
+    <div className="space-y-4">
+      <div style={SHADE.magenta} className="sticker relative rounded-3xl">
         <ProductImage
           path={current?.display_path}
           alt={current?.alt_text ?? name}
           sizes="(min-width: 1024px) 34rem, 100vw"
           priority
-          className="aspect-square w-full rounded-xl border border-border"
+          className="aspect-square w-full rounded-[1.375rem] bg-paper"
           imageClassName="object-contain"
         />
-        {sold && <SoldOverlay />}
+        {sold && <SoldStamp />}
       </div>
 
       {photos.length > 1 && (
-        <ul className="flex flex-wrap gap-2">
+        <ul className="flex flex-wrap gap-3">
           {photos.map((photo, index) => (
             <li key={photo.id}>
               <button
@@ -43,10 +44,10 @@ export function ProductPhotos({
                 aria-label={`Show photo ${index + 1} of ${photos.length}`}
                 aria-current={index === active ? "true" : undefined}
                 className={cn(
-                  "block overflow-hidden rounded-lg border-2 transition-colors",
+                  "block overflow-hidden rounded-xl border-2 border-ink transition-shadow",
                   index === active
-                    ? "border-brand"
-                    : "border-border hover:border-brand/50",
+                    ? "shadow-[3px_3px_0_0_var(--magenta)]"
+                    : "opacity-70 hover:opacity-100",
                 )}
               >
                 <ProductImage

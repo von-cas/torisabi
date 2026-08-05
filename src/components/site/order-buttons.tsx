@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 
 import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { BUTTON, BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 import {
   PRODUCT_STATUS_LABELS,
   isOrderable,
@@ -16,8 +16,6 @@ import { cn } from "@/lib/utils";
 export function orderMessage(name: string, code: string): string {
   return `Hi Torisabi! I'm interested in ${name}, product code ${code}. Is this still available?`;
 }
-
-const ACTION_CLASSES = "h-12 flex-1 px-5 text-sm sm:text-base";
 
 export function OrderButtons({
   name,
@@ -47,49 +45,46 @@ export function OrderButtons({
   if (!isOrderable(status)) {
     return (
       <div className="space-y-3">
-        <Button
+        <button
           type="button"
           disabled
-          className={cn(ACTION_CLASSES, "w-full")}
           aria-label={`This item is ${PRODUCT_STATUS_LABELS[status].toLowerCase()}`}
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-full border-2 border-ink/25 bg-ink/5 px-6 font-hand text-xl font-extrabold tracking-[0.14em] text-ink/45 uppercase"
         >
           {PRODUCT_STATUS_LABELS[status]}
-        </Button>
-        <p className="text-sm text-muted-foreground">
+        </button>
+        <p className="leading-relaxed text-ink/70">
           {status === "sold_out"
-            ? "This piece has found its home. Browse the gallery for what is still available."
-            : "This piece is on hold for another customer right now."}
+            ? "This one has found its home. There may be something similar on the shelf — or ask me and I will see what I can make."
+            : "This one is on hold for someone else right now. Send a message and I will tell you if it comes free."}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Button
+        <button
           type="button"
-          variant="outline"
           onClick={copyMessage}
-          className={ACTION_CLASSES}
+          style={SHADE.aqua}
+          className={cn(BUTTON, "flex-1")}
         >
           {copied ? (
             <Check className="size-4" aria-hidden="true" />
           ) : (
             <Copy className="size-4" aria-hidden="true" />
           )}
-          {copied ? "Copied!" : "Copy Order Message"}
-        </Button>
+          {copied ? "Copied!" : "Copy order message"}
+        </button>
 
         <a
           href={INSTAGRAM_DM_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className={cn(
-            buttonVariants({ variant: "default" }),
-            ACTION_CLASSES,
-            "bg-brand text-brand-foreground hover:bg-brand/90",
-          )}
+          style={SHADE.magenta}
+          className={cn(BUTTON_PRIMARY, "flex-1")}
         >
           <InstagramIcon className="size-4" />
           Order on Instagram
@@ -100,7 +95,8 @@ export function OrderButtons({
         {copied ? "Order message copied to clipboard" : ""}
       </p>
 
-      <p className="rounded-lg border border-dashed border-border bg-muted/50 px-3 py-2 text-sm leading-relaxed text-muted-foreground">
+      {/* Shown as well as copied, so it still works where the clipboard does not. */}
+      <p className="rounded-2xl border-2 border-dashed border-ink/25 bg-magenta-soft/50 px-4 py-3 text-sm leading-relaxed text-ink/80">
         {message}
       </p>
     </div>

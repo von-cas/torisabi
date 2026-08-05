@@ -11,55 +11,63 @@ import {
   InstagramIcon,
 } from "@/components/site/instagram";
 import { NAV_LINKS } from "@/components/site/nav";
-import { buttonVariants } from "@/components/ui/button";
+import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
+import { Wordmark } from "@/components/site/wordmark";
 import { cn } from "@/lib/utils";
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+/** A different colour beside each menu row, the way the logo alternates. */
+const DOTS = [
+  "bg-magenta",
+  "bg-aqua",
+  "bg-grape",
+  "bg-lemon",
+  "bg-leaf",
+  "bg-berry",
+];
+
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-paper">
+      <div className="mx-auto flex h-[4.5rem] w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:h-20 lg:px-8">
         <Link
           href="/"
           onClick={() => setOpen(false)}
-          className="text-base font-semibold uppercase tracking-[0.2em] text-foreground sm:text-lg"
+          aria-label="Torisabi — home"
+          className="shrink-0 rounded-xl"
         >
-          Torisabi
+          <Wordmark width={140} priority />
         </Link>
 
-        <nav
-          aria-label="Main"
-          className="hidden items-center gap-1 lg:flex"
-        >
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={cn(
-                "rounded-lg px-3 py-2 text-sm transition-colors hover:text-foreground",
-                isActive(pathname, link.href)
-                  ? "font-medium text-foreground"
-                  : "text-muted-foreground",
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <a
-            href={INSTAGRAM_PROFILE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Instagram
-          </a>
+        <nav aria-label="Main" className="hidden items-center gap-0.5 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const active = isActive(pathname, link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "relative rounded-full px-3 py-2 text-[0.95rem] font-medium transition-colors",
+                  active ? "text-magenta-ink" : "text-ink/70 hover:text-ink",
+                )}
+              >
+                {link.label}
+                {active && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-3 bottom-0.5 h-[3px] rounded-full bg-magenta"
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -67,11 +75,8 @@ export function SiteHeader() {
             href={INSTAGRAM_DM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "hidden h-10 px-4 lg:inline-flex",
-              "bg-brand text-brand-foreground hover:bg-brand/90",
-            )}
+            style={SHADE.magenta}
+            className={cn(BUTTON_PRIMARY, "hidden px-5 text-sm lg:inline-flex")}
           >
             <InstagramIcon className="size-4" />
             Order on Instagram
@@ -83,7 +88,8 @@ export function SiteHeader() {
             aria-expanded={open}
             aria-controls="site-mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="inline-flex size-11 items-center justify-center rounded-lg border border-border text-foreground lg:hidden"
+            style={SHADE.aqua}
+            className="sticker sticker-lift inline-flex size-12 shrink-0 items-center justify-center rounded-2xl lg:hidden"
           >
             {open ? (
               <X className="size-5" aria-hidden="true" />
@@ -95,38 +101,43 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div
-          id="site-mobile-menu"
-          className="border-t border-border bg-background lg:hidden"
-        >
+        <div id="site-mobile-menu" className="bg-paper lg:hidden">
           <nav
             aria-label="Main"
-            className="mx-auto flex w-full max-w-6xl flex-col px-4 py-2 sm:px-6"
+            className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-4 sm:px-6"
           >
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                aria-current={isActive(pathname, link.href) ? "page" : undefined}
-                className={cn(
-                  "flex min-h-12 items-center rounded-lg px-2 text-base transition-colors",
-                  isActive(pathname, link.href)
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground",
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link, index) => {
+              const active = isActive(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-13 items-center gap-3 rounded-xl px-2 font-hand text-xl font-bold",
+                    active ? "text-magenta-ink" : "text-ink",
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "size-2.5 shrink-0 rounded-full",
+                      DOTS[index % DOTS.length],
+                    )}
+                  />
+                  {link.label}
+                </Link>
+              );
+            })}
             <a
               href={INSTAGRAM_PROFILE_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="flex min-h-12 items-center gap-2 rounded-lg px-2 text-base text-muted-foreground"
+              className="flex min-h-13 items-center gap-3 rounded-xl px-2 font-hand text-xl font-bold text-ink"
             >
-              <InstagramIcon className="size-4" />
+              <InstagramIcon className="size-4 shrink-0 text-magenta" />
               Instagram
             </a>
             <a
@@ -134,17 +145,19 @@ export function SiteHeader() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className={cn(
-                buttonVariants({ variant: "default" }),
-                "my-3 h-12 w-full",
-                "bg-brand text-brand-foreground hover:bg-brand/90",
-              )}
+              style={SHADE.magenta}
+              className={cn(BUTTON_PRIMARY, "mt-3 mb-2 w-full")}
             >
+              <InstagramIcon className="size-4" />
               Order on Instagram
             </a>
           </nav>
         </div>
       )}
+
+      {/* Signature: the same doodle line closes the header, opens the footer,
+          and underlines every page title. */}
+      <div aria-hidden="true" className="squiggle text-magenta" />
     </header>
   );
 }

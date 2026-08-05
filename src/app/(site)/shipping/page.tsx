@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { ContentPage, Section } from "@/components/site/content";
+import { Callout, ContentPage, Section } from "@/components/site/content";
 
 export const metadata: Metadata = {
   title: "Shipping",
   description:
-    "Shipping fees depend on your location and are confirmed on Instagram before payment. Free shipping for orders worth ₱3,000 or more.",
+    "Shipping fees depend on your address and are confirmed on Instagram before you pay. Free shipping on orders over ₱3,000, sent from Zamboanga.",
   alternates: { canonical: "/shipping" },
 };
 
@@ -18,50 +18,50 @@ const ADDRESS_FIELDS = [
   "City or municipality",
   "Province",
   "Postal code",
-  "Delivery notes (landmarks, preferred time, gate instructions)",
+  "Anything the rider should know — landmarks, gate instructions, best time to knock",
 ];
 
 export default function ShippingPage() {
   return (
     <ContentPage
-      title="Shipping Information"
-      lead="Shipping fees depend on your location. We confirm the exact fee in the DM before any payment, so there are no surprises."
+      title="Getting it to you"
+      lead="Everything goes out from Zamboanga through the usual local couriers. What it costs depends on how far it has to travel, and I always tell you the exact figure before you pay."
     >
-      <p className="rounded-xl border border-brand/25 bg-brand-soft/50 px-5 py-4 text-center text-base font-medium text-foreground">
-        Free shipping for orders worth ₱3,000 or more.
-      </p>
+      <Callout>Free shipping on orders over ₱3,000.</Callout>
 
-      <Section title="How the free-shipping promo works">
+      <Section title="How the free-shipping promise works">
         <p>
-          This is a displayed promotion, not an automatic calculation — the
-          website has no cart and does not total your order. We apply the
-          threshold in the DM, based on the product total after any discounts.
+          It is a promise I keep by hand, not a calculation the website makes —
+          there is no cart here and nothing adds up your order automatically. I
+          apply it in the DM, based on the total after any discount.
         </p>
         <p>
-          Special, oversized, or remote-area deliveries may be excluded. If an
-          exclusion applies to your order, we tell you before you pay.
+          Very large, very fragile, or hard-to-reach deliveries can fall outside
+          it. If that is the case for your order, you will hear it from me
+          before you pay, not after.
         </p>
       </Section>
 
-      <Section title="What we need for delivery">
-        <p>Send these details in the DM once your order is confirmed:</p>
-        <ul className="list-disc space-y-2 pl-5">
+      <Section title="What I need from you">
+        <p>Send these in the DM once your order is confirmed:</p>
+        <ul className="list-disc space-y-2 pl-6 marker:text-magenta">
           {ADDRESS_FIELDS.map((field) => (
             <li key={field}>{field}</li>
           ))}
         </ul>
       </Section>
 
-      <Section title="Confirming the fee">
+      <Section title="Then what happens">
         <p>
-          Once we have your delivery address, we quote the shipping fee and the
-          final amount. Payment comes after you agree to that amount, and we
-          share the courier and tracking number as soon as the parcel is out.
+          I quote the courier fee and the final amount. You pay once you are
+          happy with it, I pack the piece — wrapped properly, because half of
+          these are fragile — and I send you the courier and the tracking number
+          as soon as it is out of my hands.
         </p>
         <p>
           <Link
             href="/how-to-order"
-            className="font-medium text-brand hover:underline"
+            className="font-semibold text-magenta-ink hover:underline"
           >
             See the full ordering steps
           </Link>

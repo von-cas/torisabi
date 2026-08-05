@@ -41,10 +41,10 @@ function Chip({
       href={href}
       aria-current={active ? "true" : undefined}
       className={cn(
-        "inline-flex min-h-10 items-center rounded-full border px-3.5 text-sm transition-colors",
+        "inline-flex min-h-11 items-center rounded-full border-2 border-ink px-4 text-sm font-semibold transition-colors",
         active
-          ? "border-brand bg-brand text-brand-foreground"
-          : "border-border bg-card text-muted-foreground hover:border-brand/50 hover:text-foreground",
+          ? "bg-ink text-paper shadow-[3px_3px_0_0_var(--magenta)]"
+          : "bg-paper text-ink hover:bg-magenta-soft",
       )}
     >
       {children}
@@ -52,16 +52,10 @@ function Chip({
   );
 }
 
-function FilterRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function FilterRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground sm:w-24 sm:shrink-0">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+      <span className="text-xs font-bold tracking-[0.16em] text-grape uppercase sm:w-24 sm:shrink-0">
         {label}
       </span>
       <div className="flex flex-wrap gap-2">{children}</div>
@@ -79,14 +73,14 @@ export function ProductFilters({
   const hasFilters = Boolean(query.category ?? query.status ?? query.sort);
 
   return (
-    <div className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-5">
+    <div className="space-y-4">
       {categories.length > 0 && (
-        <FilterRow label="Category">
+        <FilterRow label="Kind">
           <Chip
             href={buildHref(query, { category: undefined })}
             active={!query.category}
           >
-            All
+            Everything
           </Chip>
           {categories.map((category) => (
             <Chip
@@ -100,7 +94,7 @@ export function ProductFilters({
         </FilterRow>
       )}
 
-      <FilterRow label="Availability">
+      <FilterRow label="Still here">
         <Chip
           href={buildHref(query, { status: undefined })}
           active={!query.status}
@@ -118,7 +112,7 @@ export function ProductFilters({
         ))}
       </FilterRow>
 
-      <FilterRow label="Sort">
+      <FilterRow label="Order">
         {SORT_OPTIONS.map((option) => (
           <Chip
             key={option.value}
@@ -133,7 +127,7 @@ export function ProductFilters({
       {hasFilters && (
         <Link
           href="/products"
-          className="inline-flex text-sm font-medium text-brand hover:underline"
+          className="inline-flex font-semibold text-magenta-ink hover:underline"
         >
           Clear filters
         </Link>

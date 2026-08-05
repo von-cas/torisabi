@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Strawberry } from "@/components/site/doodles";
 import {
   INSTAGRAM_DM_URL,
   INSTAGRAM_PROFILE_URL,
@@ -7,32 +8,34 @@ import {
   InstagramIcon,
 } from "@/components/site/instagram";
 import { NAV_LINKS } from "@/components/site/nav";
+import { Wordmark } from "@/components/site/wordmark";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t border-border bg-secondary/50">
+    <footer className="mt-20 bg-paper">
+      <div aria-hidden="true" className="squiggle text-magenta" />
+
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
-        <div className="space-y-3">
-          <p className="text-base font-semibold uppercase tracking-[0.2em]">
-            Torisabi
+        <div className="space-y-4">
+          <Wordmark width={158} />
+          <p className="max-w-xs leading-relaxed text-ink/70">
+            Small handmade things, made one at a time in Zamboanga and sent
+            anywhere in the Philippines.
           </p>
-          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Beautiful finds, carefully selected for you. Browse the catalog here
-            and order through Instagram.
-          </p>
-          <p className="text-sm font-medium text-brand">
-            Free shipping for orders worth ₱3,000 or more.
+          <p className="flex items-start gap-2 font-hand text-lg font-bold text-magenta-ink">
+            <Strawberry className="mt-0.5 size-5 shrink-0" />
+            Free shipping on orders over ₱3,000
           </p>
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold">Explore</h2>
+          <h2 className="font-hand text-xl font-bold">Look around</h2>
           <ul className="mt-3 space-y-2">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="text-ink/70 transition-colors hover:text-magenta-ink"
                 >
                   {link.label}
                 </Link>
@@ -41,7 +44,7 @@ export function SiteFooter() {
             <li>
               <Link
                 href="/policies"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="text-ink/70 transition-colors hover:text-magenta-ink"
               >
                 Policies
               </Link>
@@ -50,36 +53,36 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold">Order</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Orders are placed through Instagram DM. Copy the order message on any
-            product page, then send it over.
+          <h2 className="font-hand text-xl font-bold">Order</h2>
+          <p className="mt-3 leading-relaxed text-ink/70">
+            Every order happens in an Instagram DM. Copy the message on any
+            product page and send it over — I answer as soon as I am off the
+            craft table.
           </p>
           <a
             href={INSTAGRAM_DM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand hover:underline"
+            className="mt-3 inline-flex items-center gap-2 font-semibold text-magenta-ink hover:underline"
           >
             <InstagramIcon className="size-4" />
-            Message us on Instagram
+            Message me on Instagram
           </a>
           <a
             href={INSTAGRAM_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 block text-sm text-muted-foreground hover:text-foreground"
+            className="mt-2 block text-ink/70 hover:text-magenta-ink"
           >
             @{INSTAGRAM_USERNAME}
           </a>
         </div>
       </div>
 
-      <div className="border-t border-border">
-        {/* Extra bottom padding clears the floating mobile order button. */}
-        <div className="mx-auto w-full max-w-6xl px-4 py-6 pb-24 text-xs text-muted-foreground sm:px-6 lg:px-8 lg:pb-6">
-          © {new Date().getFullYear()} Torisabi. All rights reserved.
-        </div>
+      {/* Extra bottom padding clears the floating mobile order button. */}
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-6 pb-24 text-sm text-ink/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8 lg:pb-8">
+        <p>Glue, glitter and a lot of patience. Zamboanga, Philippines.</p>
+        <p>© {new Date().getFullYear()} Torisabi</p>
       </div>
     </footer>
   );

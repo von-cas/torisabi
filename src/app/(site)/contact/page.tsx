@@ -8,82 +8,82 @@ import {
   INSTAGRAM_USERNAME,
   InstagramIcon,
 } from "@/components/site/instagram";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { BUTTON, BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Instagram DM is the fastest way to reach Torisabi. Business hours, response times, and where we ship from.",
+    "Instagram DM is the fastest way to reach Torisabi. Hours, reply times, and where the parcels are packed.",
   alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
   return (
     <ContentPage
-      title="Contact"
-      lead="Instagram is our main channel — messages there get answered fastest, and that is where orders are placed."
+      title="Say hello"
+      lead="Instagram is where I actually live. Messages there get answered fastest, and that is where orders are placed."
     >
-      <Section title="Instagram (primary)">
+      <Section title="Instagram — the main door">
         <p>
-          Send a DM any time. If you are asking about a specific item, include
-          the product name or code so we can check it right away.
+          Send a DM any time. If you are asking about a particular piece,
+          include its name or its code and I can check it straight away.
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 pt-1 sm:flex-row">
           <a
             href={INSTAGRAM_DM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "h-12 px-6",
-              "bg-brand text-brand-foreground hover:bg-brand/90",
-            )}
+            style={SHADE.magenta}
+            className={BUTTON_PRIMARY}
           >
             <InstagramIcon className="size-4" />
-            Message us on Instagram
+            Message me on Instagram
           </a>
           <a
             href={INSTAGRAM_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(buttonVariants({ variant: "outline" }), "h-12 px-6")}
+            style={SHADE.aqua}
+            className={BUTTON}
           >
             @{INSTAGRAM_USERNAME}
           </a>
         </div>
       </Section>
 
-      <Section title="Business hours and response time">
+      <Section title="When I am at the table">
         <p>
           Monday to Saturday, 9:00 AM to 7:00 PM Philippine time (GMT+8).
-          Messages sent outside these hours are answered the next working day.
+          Anything sent outside those hours gets picked up the next working day.
         </p>
         <p>
-          Most DMs get a reply within a few hours during business hours. If a day
-          passes without an answer, please send a follow-up — messages from new
-          accounts sometimes land in the requests folder.
-        </p>
-      </Section>
-
-      <Section title="Other channels">
-        <p>
-          A Facebook page and an email address are coming soon. Until then,
-          Instagram is the only place to reach us, and we do not use a contact
-          form.
+          Most messages get a reply within a few hours. If a whole day goes by
+          with nothing, please nudge me — messages from accounts I have not
+          spoken to before often land in the requests folder, where Instagram
+          quietly hides them.
         </p>
       </Section>
 
-      <Section title="Where we are">
+      <Section title="Other ways to reach me">
         <p>
-          Torisabi is based in the Philippines and ships nationwide through local
-          couriers. We are an online shop with no walk-in address, so pickups are
-          arranged case by case in the DM.
+          A Facebook page and an email address are on the list. Until they
+          exist, Instagram is the only way in, and there is no contact form
+          here on purpose — a DM gets you an answer faster than a web form ever
+          would.
+        </p>
+      </Section>
+
+      <Section title="Where I am">
+        <p>
+          Everything is made and packed in Zamboanga, and posted anywhere in the
+          Philippines through the usual couriers. There is no shop you can walk
+          into — it is a table, not a store — so pickups are arranged case by
+          case in the DM.
         </p>
         <p>
           <Link
             href="/shipping"
-            className="font-medium text-brand hover:underline"
+            className="font-semibold text-magenta-ink hover:underline"
           >
             Shipping information
           </Link>

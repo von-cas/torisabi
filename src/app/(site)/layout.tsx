@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
+import { cn } from "@/lib/utils";
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -19,7 +21,11 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         href={INSTAGRAM_DM_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed inset-x-4 bottom-4 z-40 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brand px-5 text-sm font-medium text-brand-foreground shadow-lg lg:hidden"
+        style={SHADE.magenta}
+        className={cn(
+          BUTTON_PRIMARY,
+          "fixed inset-x-4 bottom-4 z-40 text-[0.95rem] lg:hidden",
+        )}
       >
         <InstagramIcon className="size-4" />
         Order on Instagram

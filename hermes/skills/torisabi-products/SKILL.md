@@ -29,6 +29,10 @@ Trigger on any of these:
 If a photo arrives with no context at all, ask whether it is a Torisabi item
 before uploading. Don't guess.
 
+**Not this skill if the photo is a receipt** — a receipt for something the shop
+*bought* is a business expense, and that is `torisabi-expenses`. A delivery of
+new stock is often both: log the expense there, add the item here.
+
 ## How to run it
 
 ```bash

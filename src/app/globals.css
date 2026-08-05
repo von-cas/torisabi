@@ -7,15 +7,34 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* Torisabi brand palette — warm neutrals with a muted terracotta accent. */
+
+  /* Torisabi palette — sampled from the hand-drawn logo. White is the canvas;
+     these punctuate it. Each colour has exactly one job (see :root). */
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-magenta: var(--magenta);
+  --color-magenta-ink: var(--magenta-ink);
+  --color-magenta-soft: var(--magenta-soft);
+  --color-aqua: var(--aqua);
+  --color-lemon: var(--lemon);
+  --color-grape: var(--grape);
+  --color-leaf: var(--leaf);
+  --color-berry: var(--berry);
+
+  /* The admin styles its accents with these, so the names stay — only the
+     values moved from terracotta to the brand's magenta and green. */
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-soft: var(--brand-soft);
   --color-sage: var(--sage);
   --color-sage-soft: var(--sage-soft);
-  --font-sans: var(--font-sans);
+
+  --font-sans: var(--font-body);
+  /* The hand-lettered display face, matching the logo's bubble letters. */
+  --font-hand: var(--font-hand-stack);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-hand-stack);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,90 +74,140 @@
 }
 
 :root {
-  /* Geist is loaded on <html> by the root layout; this is the token the
-     `font-sans` utility resolves to. */
-  --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  /* Both faces are loaded on <html> by the root layout. Baloo 2 does the
+     shouting, Rubik does the reading. */
+  --font-body:
+    var(--font-rubik), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-hand-stack:
+    var(--font-baloo), var(--font-rubik), ui-rounded, ui-sans-serif, system-ui,
+    sans-serif;
 
-  /* Warm neutrals: soft cream page, deep warm brown ink. */
-  --background: oklch(0.973 0.011 84);
-  --foreground: oklch(0.27 0.016 55);
-  --card: oklch(0.992 0.006 86);
-  --card-foreground: oklch(0.27 0.016 55);
-  --popover: oklch(0.992 0.006 86);
-  --popover-foreground: oklch(0.27 0.016 55);
-  --primary: oklch(0.33 0.02 55);
-  --primary-foreground: oklch(0.981 0.011 85);
-  --secondary: oklch(0.942 0.016 80);
-  --secondary-foreground: oklch(0.32 0.02 55);
-  --muted: oklch(0.938 0.015 80);
-  --muted-foreground: oklch(0.512 0.022 58);
-  --accent: oklch(0.938 0.015 80);
-  --accent-foreground: oklch(0.32 0.02 55);
-  --destructive: oklch(0.55 0.19 27.5);
-  --border: oklch(0.898 0.016 78);
-  --input: oklch(0.898 0.016 78);
-  --ring: oklch(0.585 0.105 41);
-  /* Muted terracotta accent + a sage used for the Available badge. */
-  --brand: oklch(0.585 0.105 41);
-  --brand-foreground: oklch(0.985 0.008 85);
-  --brand-soft: oklch(0.932 0.03 58);
-  --sage: oklch(0.5 0.048 155);
-  --sage-soft: oklch(0.928 0.028 155);
-  --chart-1: oklch(0.585 0.105 41);
-  --chart-2: oklch(0.5 0.048 155);
-  --chart-3: oklch(0.512 0.022 58);
-  --chart-4: oklch(0.71 0.075 62);
-  --chart-5: oklch(0.33 0.02 55);
+  /* ── The palette ────────────────────────────────────────────────────────
+     paper       the page, always. Pure white, no exceptions.
+     ink         every word and every outline.
+     magenta     the signature accent: sticker shadows, squiggles, fills.
+     magenta-ink the same pink pushed dark enough to be read as small text.
+     aqua        fills only — step markers, tags, alternate sticker shadows.
+     lemon       fills only — the marker stroke and the promise tape. Never text.
+     grape       eyebrows, labels and the focus ring (readable on white).
+     leaf        the "in stock" dot.
+     berry       the strawberry and the SOLD stamp.                          */
+  --paper: #ffffff;
+  --ink: #1f1b2e;
+  --magenta: #e8309c;
+  --magenta-ink: #c0126f;
+  --magenta-soft: #ffe6f4;
+  --aqua: #3dd6f5;
+  --lemon: #e4e13a;
+  --grape: #9b4fd8;
+  --leaf: #2e9e5b;
+  --berry: #e8384f;
+
+  /* One hand-drawn wave, tiled. Masked rather than painted, so the colour
+     follows `color` wherever it is used. */
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10' viewBox='0 0 24 10'%3E%3Cpath d='M0 5c2-4 4-4 6 0s4 4 6 0s4-4 6 0s4 4 6 0' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: #f6f4fa;
+  --secondary-foreground: var(--ink);
+  --muted: #f4f2f8;
+  --muted-foreground: #5b5470;
+  --accent: #f6f4fa;
+  --accent-foreground: var(--ink);
+  --destructive: #cf1f3c;
+  --border: #e5e1f0;
+  --input: #d9d4e6;
+  --ring: var(--grape);
+  /* Admin accent tokens, repointed onto the brand. */
+  --brand: var(--magenta-ink);
+  --brand-foreground: var(--paper);
+  --brand-soft: var(--magenta-soft);
+  --sage: #1f7a45;
+  --sage-soft: #e2f6ea;
+  --chart-1: var(--magenta);
+  --chart-2: var(--aqua);
+  --chart-3: var(--grape);
+  --chart-4: var(--leaf);
+  --chart-5: var(--berry);
   --radius: 0.625rem;
-  --sidebar: oklch(0.955 0.013 82);
-  --sidebar-foreground: oklch(0.27 0.016 55);
-  --sidebar-primary: oklch(0.33 0.02 55);
-  --sidebar-primary-foreground: oklch(0.981 0.011 85);
-  --sidebar-accent: oklch(0.92 0.018 78);
-  --sidebar-accent-foreground: oklch(0.32 0.02 55);
-  --sidebar-border: oklch(0.898 0.016 78);
-  --sidebar-ring: oklch(0.585 0.105 41);
+  --sidebar: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: #f6f4fa;
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: #e5e1f0;
+  --sidebar-ring: var(--grape);
 }
 
-.dark {
-  --background: oklch(0.19 0.012 55);
-  --foreground: oklch(0.955 0.01 85);
-  --card: oklch(0.235 0.014 55);
-  --card-foreground: oklch(0.955 0.01 85);
-  --popover: oklch(0.235 0.014 55);
-  --popover-foreground: oklch(0.955 0.01 85);
-  --primary: oklch(0.93 0.012 85);
-  --primary-foreground: oklch(0.235 0.014 55);
-  --secondary: oklch(0.3 0.016 55);
-  --secondary-foreground: oklch(0.955 0.01 85);
-  --muted: oklch(0.3 0.016 55);
-  --muted-foreground: oklch(0.73 0.018 70);
-  --accent: oklch(0.3 0.016 55);
-  --accent-foreground: oklch(0.955 0.01 85);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.68 0.1 42);
-  --brand: oklch(0.7 0.098 45);
-  --brand-foreground: oklch(0.21 0.02 50);
-  --brand-soft: oklch(0.33 0.05 45);
-  --sage: oklch(0.72 0.06 155);
-  --sage-soft: oklch(0.31 0.04 155);
-  --chart-1: oklch(0.7 0.098 45);
-  --chart-2: oklch(0.72 0.06 155);
-  --chart-3: oklch(0.73 0.018 70);
-  --chart-4: oklch(0.6 0.06 62);
-  --chart-5: oklch(0.93 0.012 85);
-  --sidebar: oklch(0.235 0.014 55);
-  --sidebar-foreground: oklch(0.955 0.01 85);
-  --sidebar-primary: oklch(0.7 0.098 45);
-  --sidebar-primary-foreground: oklch(0.21 0.02 50);
-  --sidebar-accent: oklch(0.3 0.016 55);
-  --sidebar-accent-foreground: oklch(0.955 0.01 85);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.68 0.1 42);
+@layer components {
+  /* ── Signature 1: the squiggle ────────────────────────────────────────
+     A doodle line lifted straight off the logo. It closes the header, opens
+     the footer, and underlines every page title — the same shape in three
+     places rather than three different flourishes. Where masks are not
+     supported it degrades to a plain coloured rule. */
+  .squiggle {
+    display: block;
+    height: 0.625rem;
+    background-color: currentColor;
+    -webkit-mask-image: var(--wave);
+    mask-image: var(--wave);
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: 24px 10px;
+    mask-size: 24px 10px;
+    -webkit-mask-position: left center;
+    mask-position: left center;
+  }
+
+  /* ── Signature 2: the sticker ─────────────────────────────────────────
+     Cards, tags and buttons are die-cut stickers: white, chunky ink outline,
+     a solid colour block offset behind. `--shade` picks the colour. */
+  .sticker {
+    border: 2px solid var(--ink);
+    background-color: var(--paper);
+    box-shadow: 5px 5px 0 0 var(--shade, var(--magenta));
+  }
+
+  .sticker-lift {
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+  .sticker-lift:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 var(--shade, var(--magenta));
+  }
+  .sticker-lift:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 0 var(--shade, var(--magenta));
+  }
+
+  /* The yellow marker stroke, drawn behind a word that matters. */
+  .marker {
+    background-image: linear-gradient(var(--lemon), var(--lemon));
+    background-repeat: no-repeat;
+    background-size: 100% 0.36em;
+    background-position: 0 86%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticker-lift {
+      transition: none;
+    }
+    .sticker-lift:hover,
+    .sticker-lift:active {
+      transform: none;
+    }
+  }
 }
 
 @layer base {
@@ -150,6 +219,13 @@
   }
   html {
     @apply font-sans;
+  }
+
+  /* Anything focused by keyboard gets a grape ring. Components that style
+     their own focus state (the shadcn button) still win — this is the floor. */
+  :focus-visible {
+    outline: 3px solid var(--grape);
+    outline-offset: 3px;
   }
 
   /* Tailwind v4 dropped the old preflight rule that gave buttons a pointer

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/site/content";
+import { Strawberry } from "@/components/site/doodles";
+import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
 import { JsonLd } from "@/components/site/json-ld";
 import { ProductCard } from "@/components/site/product-card";
 import {
@@ -12,9 +14,11 @@ import {
   safeGetCategories,
   safeGetProducts,
 } from "@/components/site/safe-queries";
+import { BUTTON, SHADE } from "@/components/site/sticker";
 import type { ProductFilters as QueryFilters } from "@/lib/queries";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { PUBLIC_STATUSES, type ProductStatus } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type SortValue = NonNullable<QueryFilters["sort"]>;
 
@@ -55,7 +59,7 @@ export async function generateMetadata({
   return {
     title: "Products",
     description:
-      "Browse the full Torisabi collection — photos, prices, and availability. Order any piece through Instagram.",
+      "Everything on the Torisabi shelf — photos, prices and what is still available. Handmade in Zamboanga, ordered through Instagram.",
     // One indexable gallery. Filter and sort permutations show the same items in
     // a different order, so they stay out of the index and pass their link
     // equity on to the clean /products URL (MASTER-PLAN.md §10 SEO).
@@ -87,42 +91,60 @@ export default async function ProductsPage({
       />
 
       <PageHeader
-        title="Products"
-        lead="Every piece in the collection, including the ones already sold. Prices are in Philippine pesos."
+        title="The shelf"
+        lead="Everything I have made, including the pieces that already went home with someone. Prices are in Philippine pesos."
       />
 
-      <div className="mt-8">
+      <div className="mt-10">
         <ProductFilters categories={categories} query={query} />
       </div>
 
       {products.length > 0 ? (
         <>
-          <p className="mt-8 text-sm text-muted-foreground">
-            {products.length} {products.length === 1 ? "item" : "items"}
+          <p className="mt-10 text-sm font-semibold text-ink/60">
+            {products.length} {products.length === 1 ? "piece" : "pieces"}
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </>
       ) : (
-        <div className="mt-8 rounded-xl border border-dashed border-border bg-card px-6 py-16 text-center">
-          <p className="text-base font-medium">
-            {isFiltered ? "Nothing matches those filters" : "No products yet"}
-          </p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+        <div
+          style={SHADE.lemon}
+          className="sticker mt-10 -rotate-1 rounded-3xl px-6 py-16 text-center"
+        >
+          <Strawberry className="mx-auto size-10" />
+          <p className="mt-4 font-hand text-2xl font-extrabold text-ink sm:text-3xl">
             {isFiltered
-              ? "Try widening your search — the collection is small and changes often."
-              : "The first pieces are on their way. Check back soon, or follow along on Instagram."}
+              ? "Nothing here with those filters"
+              : "The shelf is empty — for now"}
           </p>
-          {isFiltered && (
+          <p className="mx-auto mt-2 max-w-md leading-relaxed text-ink/75">
+            {isFiltered
+              ? "The shelf is small and it changes often. Try widening the search."
+              : "I am making the first batch. Everything goes up here the moment it is finished, and it lands on Instagram first."}
+          </p>
+          {isFiltered ? (
             <Link
               href="/products"
-              className="mt-5 inline-flex text-sm font-medium text-brand hover:underline"
+              style={SHADE.magenta}
+              className={cn(BUTTON, "mt-6")}
             >
-              Clear filters
+              Show everything
             </Link>
+          ) : (
+            <a
+              href={INSTAGRAM_DM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={SHADE.magenta}
+              className={cn(BUTTON, "mt-6")}
+            >
+              <InstagramIcon className="size-4" />
+              Follow along on Instagram
+            </a>
           )}
         </div>
       )}

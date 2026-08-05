@@ -22,7 +22,15 @@ import { createClient } from "@supabase/supabase-js";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DRIVE = "/Users/von/Library/CloudStorage/GoogleDrive-vlawrence0324@gmail.com/My Drive/Torisabi Backups";
 const KEEP_WEEKS = 8;
-const TABLES = ["products", "product_photos", "orders", "order_items", "invoices", "expenses"];
+const TABLES = [
+  "products",
+  "product_photos",
+  "orders",
+  "order_items",
+  "invoices",
+  "expenses",
+  "audit_log", // who changed what — worth keeping if the database is ever lost
+];
 
 const env = Object.fromEntries(
   readFileSync(join(root, ".env.local"), "utf8")
