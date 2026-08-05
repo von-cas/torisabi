@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ProductImage } from "@/components/site/product-image";
+import { ZoomableImage } from "@/components/site/zoomable-image";
 import { SHADE } from "@/components/site/sticker";
 import { SoldStamp } from "@/components/site/status-badge";
 import type { ProductPhoto } from "@/lib/types";
@@ -23,13 +24,11 @@ export function ProductPhotos({
   return (
     <div className="space-y-4">
       <div style={SHADE.magenta} className="sticker relative rounded-3xl">
-        <ProductImage
+        <ZoomableImage
           path={current?.display_path}
           alt={current?.alt_text ?? name}
           sizes="(min-width: 1024px) 34rem, 100vw"
-          priority
           className="aspect-square w-full rounded-[1.375rem] bg-paper"
-          imageClassName="object-contain"
         />
         {sold && <SoldStamp />}
       </div>
