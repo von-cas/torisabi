@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Policies",
   description:
     "Reservations, payment, shipping, returns, exchanges, damaged items, cancellations, and privacy at Torisabi.",
+  alternates: { canonical: "/policies" },
 };
 
 export default function PoliciesPage() {

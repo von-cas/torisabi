@@ -8,6 +8,12 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // Both hostnames point at the worker; src/middleware.ts 301-redirects the
+  // apex to www so the site has one canonical host (MASTER-PLAN.md §10 SEO).
+  "routes": [
+    { "pattern": "www.torisabi.com", "custom_domain": true },
+    { "pattern": "torisabi.com", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   }

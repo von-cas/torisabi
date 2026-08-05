@@ -1,7 +1,22 @@
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
+const CANONICAL_HOST = "www.torisabi.com";
+const APEX_HOST = "torisabi.com";
+
 export async function middleware(request: NextRequest) {
+  // One canonical hostname: torisabi.com → www.torisabi.com, permanently, with
+  // the path and query preserved. Search engines treat the two hosts as one site
+  // only if the redirect is a 301. Runs before anything else so redirected
+  // requests never touch Supabase.
+  const host = request.headers.get("host")?.split(":")[0];
+  if (host === APEX_HOST) {
+    const url = new URL(request.url);
+    url.protocol = "https:";
+    url.host = CANONICAL_HOST;
+    return NextResponse.redirect(url, 301);
+  }
+
   return updateSession(request);
 }
 

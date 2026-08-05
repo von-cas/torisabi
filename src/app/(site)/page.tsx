@@ -1,13 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
+import { JsonLd } from "@/components/site/json-ld";
 import { ProductCard } from "@/components/site/product-card";
 import {
   safeGetCategories,
   safeGetFeaturedProducts,
 } from "@/components/site/safe-queries";
 import { buttonVariants } from "@/components/ui/button";
+import { organizationJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
+
+// `absolute` keeps the home page off the "%s | Torisabi" template — the brand is
+// already in the title, and "Home | Torisabi" says less to a searcher.
+export const metadata: Metadata = {
+  title: { absolute: "Torisabi — Beautiful finds, carefully selected for you" },
+  description:
+    "A small, hand-picked collection of beautiful finds from the Philippines. Browse photos, prices, and availability, then order in a few taps on Instagram.",
+  alternates: { canonical: "/" },
+};
 
 const CONTAINER = "mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8";
 
@@ -34,6 +46,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={organizationJsonLd()} />
+
       {/* Hero */}
       <section className="bg-linear-to-b from-brand-soft/45 to-background">
         <div className={cn(CONTAINER, "py-16 sm:py-24")}>

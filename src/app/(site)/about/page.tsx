@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Torisabi is a small, carefully curated shop in the Philippines. Every piece is chosen by hand and sold through Instagram.",
+  alternates: { canonical: "/about" },
 };
 
 const VALUES = [

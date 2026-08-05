@@ -29,7 +29,12 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  function finish() {
+  function finish(to?: string) {
+    if (to) {
+      router.replace(to);
+      router.refresh();
+      return;
+    }
     const next = new URLSearchParams(window.location.search).get("next");
     const safe = next && next.startsWith("/admin") && !next.startsWith("//");
     router.replace(safe ? next : "/admin");
@@ -55,6 +60,14 @@ export default function AdminLoginPage() {
         await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (aalError) {
         setError(aalError.message);
+        return;
+      }
+
+      // nextLevel "aal1" means this account has no verified authenticator yet.
+      // Until it enrols one the database still refuses every admin query, so
+      // send it straight to setup rather than to a dashboard full of errors.
+      if (aal?.nextLevel === "aal1") {
+        finish("/admin/security");
         return;
       }
 

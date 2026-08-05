@@ -52,6 +52,20 @@ export function storageUrl(path: string): string {
   return `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${path.replace(/^\/+/, "")}`;
 }
 
+/**
+ * Free-form copy → a meta description. Collapses whitespace and cuts at a word
+ * boundary near `max` (Google renders roughly 155 characters), so a long product
+ * description never ends mid-word.
+ */
+export function metaDescription(text: string, max = 155): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+
+  const cut = clean.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+}
+
 export function productJsonLd(product: ProductWithPhotos) {
   // The price a buyer actually pays, as a plain decimal string ("1250.00").
   const centavos = product.discounted_price_centavos ?? product.price_centavos;

@@ -2,11 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/site/json-ld";
 import { OrderButtons } from "@/components/site/order-buttons";
 import { ProductPhotos } from "@/components/site/product-photos";
 import { safeGetProductBySlug } from "@/components/site/safe-queries";
 import { StatusBadge } from "@/components/site/status-badge";
 import { formatPeso } from "@/lib/money";
+import {
+  breadcrumbJsonLd,
+  metaDescription,
+  productJsonLd,
+  storageUrl,
+} from "@/lib/seo";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -18,13 +25,38 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await safeGetProductBySlug(slug);
 
-  if (!product) return { title: "Product not found" };
+  if (!product) return { title: "Product not found", robots: { index: false } };
+
+  const path = `/products/${product.slug}`;
+  const description = metaDescription(
+    product.description ??
+      `${product.name} (${product.code}) from the Torisabi collection. Order through Instagram.`,
+  );
+  // Only the first photo — an OG image list is a preview, not a gallery. No
+  // photo yet means no image tag at all, never a URL that resolves to nothing.
+  const cover = product.photos[0];
 
   return {
     title: product.name,
-    description:
-      product.description?.slice(0, 160) ??
-      `${product.name} (${product.code}) from the Torisabi collection. Order through Instagram.`,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      siteName: "Torisabi",
+      locale: "en_PH",
+      title: product.name,
+      description,
+      url: path,
+      images: cover
+        ? [
+            {
+              url: storageUrl(cover.display_path),
+              alt: cover.alt_text ?? product.name,
+            },
+          ]
+        : undefined,
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -38,6 +70,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <JsonLd data={productJsonLd(product)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Products", path: "/products" },
+          { name: product.name, path: `/products/${product.slug}` },
+        ])}
+      />
+
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li>
@@ -80,7 +121,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="text-3xl font-semibold tracking-tight break-words sm:text-4xl">
               {product.name}
             </h1>
 
@@ -99,7 +140,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           {product.description && (
-            <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="whitespace-pre-line break-words text-sm leading-relaxed text-muted-foreground sm:text-base">
               {product.description}
             </p>
           )}

@@ -85,12 +85,16 @@ export default async function AdminProductsPage({
     loadProducts(),
     searchParams,
   ]);
+  const filter = params.filter === "draft" ? "draft" : "all";
 
   return (
+    // Keyed so arriving from the dashboard's "Drafts to review" tile always
+    // starts on the right filter instead of reusing the previous state.
     <ProductTable
+      key={filter}
       products={products}
       loadError={error}
-      initialFilter={params.filter === "draft" ? "draft" : "all"}
+      initialFilter={filter}
     />
   );
 }

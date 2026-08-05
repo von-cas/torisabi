@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Shipping",
   description:
     "Shipping fees depend on your location and are confirmed on Instagram before payment. Free shipping for orders worth ₱3,000 or more.",
+  alternates: { canonical: "/shipping" },
 };
 
 const ADDRESS_FIELDS = [

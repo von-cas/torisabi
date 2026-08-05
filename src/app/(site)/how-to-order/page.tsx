@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "How to Order",
   description:
     "Ordering from Torisabi takes a few taps: copy the order message, send it on Instagram, and we confirm stock, shipping, and payment in the DM.",
+  alternates: { canonical: "/how-to-order" },
 };
 
 const STEPS = [

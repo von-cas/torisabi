@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Instagram DM is the fastest way to reach Torisabi. Business hours, response times, and where we ship from.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

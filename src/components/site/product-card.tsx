@@ -28,7 +28,7 @@ export function ProductCard({ product }: { product: ProductWithPhotos }) {
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-medium leading-snug text-foreground sm:text-base">
+          <h3 className="text-sm font-medium leading-snug break-words text-foreground sm:text-base">
             {product.name}
           </h3>
           {!isSold && <StatusBadge status={product.status} />}
