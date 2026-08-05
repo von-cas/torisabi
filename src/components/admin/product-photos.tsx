@@ -156,8 +156,9 @@ export function ProductPhotos({
         className="block w-full text-xs file:mr-2 file:h-11 file:rounded-md file:border file:border-border file:bg-background file:px-3 file:text-xs"
       />
       <p className="text-[11px] text-muted-foreground">
-        Photos are resized and converted to WebP on this device before they
-        upload.
+        Add as many as you like — pick several at once, and keep adding whenever
+        you want. Each is resized and converted to WebP on this device before it
+        uploads.
       </p>
 
       {error ? <p className="text-xs text-destructive">{error}</p> : null}

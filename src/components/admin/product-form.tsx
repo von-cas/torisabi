@@ -399,8 +399,8 @@ export function ProductForm({
             />
             <p className="text-[11px] text-muted-foreground">
               {files.length > 0
-                ? `${files.length} photo${files.length === 1 ? "" : "s"} ready — they upload once the product is created.`
-                : "Compressed to WebP on this device before uploading. You can add more after saving."}
+                ? `${files.length} photo${files.length === 1 ? "" : "s"} ready — they upload once the product is created. Pick more to add them.`
+                : "Add as many as you like — pick several at once. Each is compressed to WebP on this device before uploading, and you can add more after saving."}
             </p>
           </div>
         )}

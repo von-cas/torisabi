@@ -15,7 +15,10 @@ export const dynamic = "force-dynamic";
 type ServiceClient = ReturnType<typeof createServiceClient>;
 
 const PHOTO_BUCKET = "product-photos";
-const MAX_PHOTOS = 10;
+// A generous ceiling, not a product limit: it only stops a single malformed
+// request from trying to stream thousands of files at once. The admin uploader
+// has no cap, and a real product never needs this many.
+const MAX_PHOTOS = 40;
 const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 const RATE_LIMIT = 20;
 const RATE_WINDOW_MS = 60_000;
