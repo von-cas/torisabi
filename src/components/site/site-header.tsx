@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import {
-  INSTAGRAM_DM_URL,
-  INSTAGRAM_PROFILE_URL,
-  InstagramIcon,
-} from "@/components/site/instagram";
+  MESSENGER_URL,
+  FACEBOOK_PROFILE_URL,
+  MessengerIcon,
+} from "@/components/site/messenger";
 import { NAV_LINKS } from "@/components/site/nav";
 import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 import { Wordmark } from "@/components/site/wordmark";
@@ -72,14 +72,14 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <a
-            href={INSTAGRAM_DM_URL}
+            href={MESSENGER_URL}
             target="_blank"
             rel="noopener noreferrer"
             style={SHADE.magenta}
             className={cn(BUTTON_PRIMARY, "hidden px-5 text-sm lg:inline-flex")}
           >
-            <InstagramIcon className="size-4" />
-            Order on Instagram
+            <MessengerIcon className="size-4" />
+            Message to order
           </a>
 
           <button
@@ -131,25 +131,25 @@ export function SiteHeader() {
               );
             })}
             <a
-              href={INSTAGRAM_PROFILE_URL}
+              href={FACEBOOK_PROFILE_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
               className="flex min-h-13 items-center gap-3 rounded-xl px-2 font-hand text-xl font-bold text-ink"
             >
-              <InstagramIcon className="size-4 shrink-0 text-magenta" />
-              Instagram
+              <MessengerIcon className="size-4 shrink-0 text-magenta" />
+              Facebook
             </a>
             <a
-              href={INSTAGRAM_DM_URL}
+              href={MESSENGER_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
               style={SHADE.magenta}
               className={cn(BUTTON_PRIMARY, "mt-3 mb-2 w-full")}
             >
-              <InstagramIcon className="size-4" />
-              Order on Instagram
+              <MessengerIcon className="size-4" />
+              Message to order
             </a>
           </nav>
         </div>

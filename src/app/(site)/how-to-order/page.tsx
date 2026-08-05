@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Callout, ContentPage, Section } from "@/components/site/content";
-import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
+import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { BUTTON, BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 
 export const metadata: Metadata = {
   title: "How to Order",
   description:
-    "Ordering from Torisabi takes a few taps: copy the order message, send it on Instagram, and we sort out stock, shipping and payment in the DM.",
+    "Ordering from Torisabi takes a couple of taps: open the piece, tap Message to order, and we sort out stock, shipping and payment in the chat.",
   alternates: { canonical: "/how-to-order" },
 };
 
 const STEPS = [
   "Have a look through the shelf.",
   "Pick the piece you want.",
-  "Tap Copy order message, then Order on Instagram.",
+  "Open the piece and tap Message to order.",
   "Send the message — the name and the code are already in it.",
   "Tell me where it is going.",
   "Wait for me to confirm the piece is free and quote the shipping.",
@@ -83,14 +83,14 @@ export default function HowToOrderPage() {
           See what is on the shelf
         </Link>
         <a
-          href={INSTAGRAM_DM_URL}
+          href={MESSENGER_URL}
           target="_blank"
           rel="noopener noreferrer"
           style={SHADE.aqua}
           className={BUTTON}
         >
-          <InstagramIcon className="size-4" />
-          Order on Instagram
+          <MessengerIcon className="size-4" />
+          Message to order
         </a>
       </div>
     </ContentPage>

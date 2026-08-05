@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Script from "next/script";
 
-import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
+import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
@@ -28,7 +28,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       {/* MASTER-PLAN.md §4: ordering stays one tap away on a phone, where the
           header's Order button is collapsed into the menu. */}
       <a
-        href={INSTAGRAM_DM_URL}
+        href={MESSENGER_URL}
         target="_blank"
         rel="noopener noreferrer"
         style={SHADE.magenta}
@@ -37,8 +37,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           "fixed inset-x-4 bottom-4 z-40 text-[0.95rem] lg:hidden",
         )}
       >
-        <InstagramIcon className="size-4" />
-        Order on Instagram
+        <MessengerIcon className="size-4" />
+        Message to order
       </a>
     </>
   );

@@ -2,11 +2,11 @@ import Link from "next/link";
 
 import { Strawberry } from "@/components/site/doodles";
 import {
-  INSTAGRAM_DM_URL,
-  INSTAGRAM_PROFILE_URL,
-  INSTAGRAM_USERNAME,
-  InstagramIcon,
-} from "@/components/site/instagram";
+  MESSENGER_URL,
+  FACEBOOK_PROFILE_URL,
+  FACEBOOK_LABEL,
+  MessengerIcon,
+} from "@/components/site/messenger";
 import { NAV_LINKS } from "@/components/site/nav";
 import { Wordmark } from "@/components/site/wordmark";
 
@@ -55,26 +55,26 @@ export function SiteFooter() {
         <div>
           <h2 className="font-hand text-xl font-bold">Order</h2>
           <p className="mt-3 leading-relaxed text-ink/70">
-            Every order happens in an Instagram DM. Copy the message on any
+            Every order happens in a Facebook Messenger chat. Tap Message to order on any
             product page and send it over — I answer as soon as I am off the
             craft table.
           </p>
           <a
-            href={INSTAGRAM_DM_URL}
+            href={MESSENGER_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-flex items-center gap-2 font-semibold text-magenta-ink hover:underline"
           >
-            <InstagramIcon className="size-4" />
-            Message me on Instagram
+            <MessengerIcon className="size-4" />
+            Message me on Facebook
           </a>
           <a
-            href={INSTAGRAM_PROFILE_URL}
+            href={FACEBOOK_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 block text-ink/70 hover:text-magenta-ink"
           >
-            @{INSTAGRAM_USERNAME}
+            {FACEBOOK_LABEL}
           </a>
         </div>
       </div>

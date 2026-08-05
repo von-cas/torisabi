@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Sparkle, Strawberry } from "@/components/site/doodles";
-import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
+import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { JsonLd } from "@/components/site/json-ld";
 import { ProductCard } from "@/components/site/product-card";
 import {
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: { absolute: "Torisabi — your daily crafter in Zamboanga" },
   description:
-    "Small handmade things, made one at a time in Zamboanga. Browse the shelf for photos, prices and what is still available, then order in a few taps on Instagram.",
+    "Small handmade things, made one at a time in Zamboanga. Browse the shelf for photos, prices and what is still available, then order in a few taps on Facebook.",
   alternates: { canonical: "/" },
 };
 
@@ -46,7 +46,7 @@ const STEPS = [
   },
   {
     title: "Copy and send",
-    body: "Tap Copy Order Message, then Order on Instagram, and paste it into the DM. That is the whole checkout.",
+    body: "Tap Message to order and it opens a Facebook chat with me. Tell me the piece — that is the whole checkout.",
     shade: SHADE.aqua,
   },
   {
@@ -102,14 +102,14 @@ export default async function HomePage() {
                 See what is on the shelf
               </Link>
               <a
-                href={INSTAGRAM_DM_URL}
+                href={MESSENGER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={SHADE.aqua}
                 className={BUTTON}
               >
-                <InstagramIcon className="size-4" />
-                Say hi on Instagram
+                <MessengerIcon className="size-4" />
+                Message us on Facebook
               </a>
             </div>
           </div>
@@ -192,17 +192,17 @@ export default async function HomePage() {
             </p>
             <p className="mx-auto mt-2 max-w-md leading-relaxed text-ink/75">
               I am making the first batch. Everything goes up here the moment it
-              is finished, and it lands on Instagram first.
+              is finished, and it lands on Facebook first.
             </p>
             <a
-              href={INSTAGRAM_DM_URL}
+              href={MESSENGER_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={SHADE.magenta}
               className={cn(BUTTON, "mt-6")}
             >
-              <InstagramIcon className="size-4" />
-              Follow along on Instagram
+              <MessengerIcon className="size-4" />
+              Follow along on Facebook
             </a>
           </div>
         )}
@@ -237,7 +237,7 @@ export default async function HomePage() {
         </h2>
         <p className="mt-2 max-w-xl leading-relaxed text-ink/75">
           There is no cart and no checkout here. Everything happens in an
-          Instagram DM, with an actual person on the other end.
+          Facebook Messenger, with an actual person on the other end.
         </p>
 
         <ol className="mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">

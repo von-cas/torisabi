@@ -3,17 +3,17 @@ import Link from "next/link";
 
 import { ContentPage, Section } from "@/components/site/content";
 import {
-  INSTAGRAM_DM_URL,
-  INSTAGRAM_PROFILE_URL,
-  INSTAGRAM_USERNAME,
-  InstagramIcon,
-} from "@/components/site/instagram";
+  MESSENGER_URL,
+  FACEBOOK_PROFILE_URL,
+  FACEBOOK_LABEL,
+  MessengerIcon,
+} from "@/components/site/messenger";
 import { BUTTON, BUTTON_PRIMARY, SHADE } from "@/components/site/sticker";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Instagram DM is the fastest way to reach Torisabi. Hours, reply times, and where the parcels are packed.",
+    "Facebook Messenger is the fastest way to reach Torisabi. Hours, reply times, and where the parcels are packed.",
   alternates: { canonical: "/contact" },
 };
 
@@ -21,32 +21,32 @@ export default function ContactPage() {
   return (
     <ContentPage
       title="Say hello"
-      lead="Instagram is where I actually live. Messages there get answered fastest, and that is where orders are placed."
+      lead="Facebook is where I actually live. Messages there get answered fastest, and that is where orders are placed."
     >
-      <Section title="Instagram — the main door">
+      <Section title="Facebook — the main door">
         <p>
           Send a DM any time. If you are asking about a particular piece,
           include its name or its code and I can check it straight away.
         </p>
         <div className="flex flex-col gap-3 pt-1 sm:flex-row">
           <a
-            href={INSTAGRAM_DM_URL}
+            href={MESSENGER_URL}
             target="_blank"
             rel="noopener noreferrer"
             style={SHADE.magenta}
             className={BUTTON_PRIMARY}
           >
-            <InstagramIcon className="size-4" />
-            Message me on Instagram
+            <MessengerIcon className="size-4" />
+            Message me on Facebook
           </a>
           <a
-            href={INSTAGRAM_PROFILE_URL}
+            href={FACEBOOK_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
             style={SHADE.aqua}
             className={BUTTON}
           >
-            @{INSTAGRAM_USERNAME}
+            {FACEBOOK_LABEL}
           </a>
         </div>
       </Section>
@@ -59,7 +59,7 @@ export default function ContactPage() {
         <p>
           Most messages get a reply within a few hours. If a whole day goes by
           with nothing, please nudge me — messages from accounts I have not
-          spoken to before often land in the requests folder, where Instagram
+          spoken to before often land in the requests folder, where Facebook
           quietly hides them.
         </p>
       </Section>
@@ -67,7 +67,7 @@ export default function ContactPage() {
       <Section title="Other ways to reach me">
         <p>
           A Facebook page and an email address are on the list. Until they
-          exist, Instagram is the only way in, and there is no contact form
+          exist, Facebook is the only way in, and there is no contact form
           here on purpose — a DM gets you an answer faster than a web form ever
           would.
         </p>

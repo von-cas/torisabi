@@ -4,16 +4,16 @@ import Link from "next/link";
 import { ContentPage, Section } from "@/components/site/content";
 import { Strawberry } from "@/components/site/doodles";
 import {
-  INSTAGRAM_PROFILE_URL,
-  INSTAGRAM_USERNAME,
-  InstagramIcon,
-} from "@/components/site/instagram";
+  FACEBOOK_PROFILE_URL,
+  FACEBOOK_LABEL,
+  MessengerIcon,
+} from "@/components/site/messenger";
 import { SHADE } from "@/components/site/sticker";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Torisabi is one crafter in Zamboanga, Philippines, making small handmade things and selling them through Instagram.",
+    "Torisabi is one crafter in Zamboanga, Philippines, making small handmade things and selling them through Facebook.",
   alternates: { canonical: "/about" },
 };
 
@@ -93,17 +93,17 @@ export default function AboutPage() {
 
       <Section title="Follow along">
         <p>
-          New things go up on Instagram first, and that is also where orders
+          New things go up on Facebook first, and that is also where orders
           happen.
         </p>
         <p className="flex flex-wrap gap-4">
           <a
-            href={INSTAGRAM_PROFILE_URL}
+            href={FACEBOOK_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 font-semibold text-magenta-ink hover:underline"
           >
-            <InstagramIcon className="size-4" />@{INSTAGRAM_USERNAME}
+            <MessengerIcon className="size-4" />{FACEBOOK_LABEL}
           </a>
           <Link
             href="/contact"

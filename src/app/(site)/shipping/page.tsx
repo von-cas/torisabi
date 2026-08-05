@@ -6,7 +6,7 @@ import { Callout, ContentPage, Section } from "@/components/site/content";
 export const metadata: Metadata = {
   title: "Shipping",
   description:
-    "Shipping fees depend on your address and are confirmed on Instagram before you pay. Free shipping on orders over ₱3,000, sent from Zamboanga.",
+    "Shipping fees depend on your address and are confirmed on Facebook before you pay. Free shipping on orders over ₱3,000, sent from Zamboanga.",
   alternates: { canonical: "/shipping" },
 };
 

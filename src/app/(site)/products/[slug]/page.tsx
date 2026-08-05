@@ -31,7 +31,7 @@ export async function generateMetadata({
   const path = `/products/${product.slug}`;
   const description = metaDescription(
     product.description ??
-      `${product.name} (${product.code}) from the Torisabi collection. Order through Instagram.`,
+      `${product.name} (${product.code}) from the Torisabi collection. Order through Facebook.`,
   );
   // Only the first photo — an OG image list is a preview, not a gallery. No
   // photo yet means no image tag at all, never a URL that resolves to nothing.
@@ -166,11 +166,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           )}
 
-          <OrderButtons
-            name={product.name}
-            code={product.code}
-            status={product.status}
-          />
+          <OrderButtons status={product.status} />
 
           <div
             style={SHADE.lemon}

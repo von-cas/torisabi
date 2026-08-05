@@ -20,8 +20,9 @@ const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(
   "",
 );
 
-const INSTAGRAM_USERNAME =
-  process.env.NEXT_PUBLIC_INSTAGRAM_USERNAME ?? "torisabi";
+const FACEBOOK_URL = `https://www.facebook.com/people/Torisabi-Ph/${
+  process.env.NEXT_PUBLIC_FACEBOOK_ID ?? "61563228086384"
+}/`;
 
 /** Public bucket created in supabase/migrations/0001_init.sql. */
 const PHOTO_BUCKET = "product-photos";
@@ -95,7 +96,7 @@ export function organizationJsonLd() {
     name: "Torisabi",
     url: absoluteUrl("/"),
     logo: absoluteUrl(LOGO_PATH),
-    sameAs: [`https://www.instagram.com/${INSTAGRAM_USERNAME}`],
+    sameAs: [FACEBOOK_URL],
   };
 }
 

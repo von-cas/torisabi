@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/site/content";
 import { Strawberry } from "@/components/site/doodles";
-import { INSTAGRAM_DM_URL, InstagramIcon } from "@/components/site/instagram";
+import { MESSENGER_URL, MessengerIcon } from "@/components/site/messenger";
 import { JsonLd } from "@/components/site/json-ld";
 import { ProductCard } from "@/components/site/product-card";
 import {
@@ -62,7 +62,7 @@ export async function generateMetadata({
   return {
     title: "Products",
     description:
-      "Everything on the Torisabi shelf — photos, prices and what is still available. Handmade in Zamboanga, ordered through Instagram.",
+      "Everything on the Torisabi shelf — photos, prices and what is still available. Handmade in Zamboanga, ordered through Facebook.",
     // One indexable gallery. Filter and sort permutations show the same items in
     // a different order, so they stay out of the index and pass their link
     // equity on to the clean /products URL (MASTER-PLAN.md §10 SEO).
@@ -134,7 +134,7 @@ export default async function ProductsPage({
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-ink/75">
             {isFiltered
               ? "The shelf is small and it changes often. Try another word, or clear the search."
-              : "I am making the first batch. Everything goes up here the moment it is finished, and it lands on Instagram first."}
+              : "I am making the first batch. Everything goes up here the moment it is finished, and it lands on Facebook first."}
           </p>
           {isFiltered ? (
             <Link
@@ -146,14 +146,14 @@ export default async function ProductsPage({
             </Link>
           ) : (
             <a
-              href={INSTAGRAM_DM_URL}
+              href={MESSENGER_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={SHADE.magenta}
               className={cn(BUTTON, "mt-6")}
             >
-              <InstagramIcon className="size-4" />
-              Follow along on Instagram
+              <MessengerIcon className="size-4" />
+              Follow along on Facebook
             </a>
           )}
         </div>
