@@ -435,6 +435,7 @@ Explicitly NOT in v1: shopping cart, online checkout, live payment integration, 
 - [x] **T1.17** Keyword product search (added on request, 2026-08-05). A GET-form search box on `/products` matching name, description and category. GATE: name, category and description-only terms all resolve; multi-word narrows; gibberish shows the empty state.
   ✓ 2026-08-05 — verified against seeded data: `rattan`/`scarf`/`mug` (name), `home`/`bags` (category), `cotton`/`stonewashed`/`speckled` (description-only) all match; `linen scarf` narrows by both words; `xyzzy` → styled empty state. Each word ANDs across an OR over the three columns; query text is stripped to letters/numbers/spaces before it reaches the PostgREST filter so it cannot be reshaped. Live on production. Searched URLs are `noindex,follow`.
 - [ ] **ACCEPTANCE P1** — the owner adds a real product end-to-end on her phone (photos → details → publish → sees it live → marks it sold → SOLD appears on the site) without help. GATE: she completes it; any friction becomes new tasks before the phase closes.
+  — 2026-08-05 **first real product is LIVE**: TS-001 "Jujutsu Kaisen" (manual, available, 1 photo) was added through the admin and renders in the gallery, on its own page `/products/jujutsu-kaisen`, and is found by search (`?q=jujutsu`). The add→publish→appears-live half of the gate is met unaided. Remaining to fully close: confirm the mark-sold → SOLD-badge half with a real item.
 
 ### Phase 2 — Business tracking in the admin (~1 day)
 
