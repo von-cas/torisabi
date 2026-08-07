@@ -1,4 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+
+import { createPublicClient } from "@/lib/supabase/public";
 import type {
   ProductPhoto,
   ProductWithPhotos,
@@ -10,9 +12,20 @@ import type {
  * `public_product_photos` views, so drafts, archived items, and cost prices are
  * unreachable by construction rather than by a filter someone might forget.
  *
- * These run per request (no caching) so an admin edit — marking an item Sold Out,
- * say — is reflected on the site immediately. See MASTER-PLAN.md §10.
+ * The reads go through a cookie-free client and are wrapped in `unstable_cache`,
+ * so a busy day serves the catalogue from cache instead of re-querying Supabase
+ * (and re-rendering) for every visitor. All entries share the `CATALOGUE_TAG`,
+ * which `/api/revalidate` purges the instant an admin adds, edits, sells, or
+ * removes a product — so an edit still shows immediately. The one-hour
+ * `revalidate` is only a backstop for a missed purge. See MASTER-PLAN.md §10.
  */
+
+/** On-demand cache tag for every public catalogue read. */
+export const CATALOGUE_TAG = "catalogue";
+
+/** Backstop TTL (seconds): cached catalogue data self-heals within the hour even
+ *  if an on-demand purge is ever missed. */
+const CACHE_TTL = 3600;
 
 export interface ProductFilters {
   category?: string;
@@ -58,10 +71,10 @@ function attachPhotos(
 /** Sold-out items sort last so the gallery leads with what is buyable. */
 const SOLD_LAST = "status.eq.sold_out";
 
-export async function getProducts(
+async function getProductsUncached(
   filters: ProductFilters = {},
 ): Promise<ProductWithPhotos[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   let query = supabase.from("public_products").select("*");
   if (filters.category) query = query.eq("category", filters.category);
@@ -107,6 +120,11 @@ export async function getProducts(
   );
 }
 
+export const getProducts = unstable_cache(getProductsUncached, ["products"], {
+  tags: [CATALOGUE_TAG],
+  revalidate: CACHE_TTL,
+});
+
 export async function getFeaturedProducts(
   limit = 6,
 ): Promise<ProductWithPhotos[]> {
@@ -115,10 +133,10 @@ export async function getFeaturedProducts(
   return (featured.length ? featured : all).slice(0, limit);
 }
 
-export async function getProductBySlug(
+async function getProductBySlugUncached(
   slug: string,
 ): Promise<ProductWithPhotos | null> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: product } = await supabase
     .from("public_products")
@@ -136,9 +154,15 @@ export async function getProductBySlug(
   return attachPhotos([product], photos ?? [])[0];
 }
 
+export const getProductBySlug = unstable_cache(
+  getProductBySlugUncached,
+  ["product-by-slug"],
+  { tags: [CATALOGUE_TAG], revalidate: CACHE_TTL },
+);
+
 /** Distinct categories that currently have at least one visible product. */
-export async function getCategories(): Promise<string[]> {
-  const supabase = await createClient();
+async function getCategoriesUncached(): Promise<string[]> {
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("public_products")
     .select("category")
@@ -147,15 +171,27 @@ export async function getCategories(): Promise<string[]> {
   return [...new Set((data ?? []).map((r) => r.category as string))].sort();
 }
 
+export const getCategories = unstable_cache(
+  getCategoriesUncached,
+  ["categories"],
+  { tags: [CATALOGUE_TAG], revalidate: CACHE_TTL },
+);
+
 /** All slugs, for sitemap generation. */
-export async function getAllProductSlugs(): Promise<
+async function getAllProductSlugsUncached(): Promise<
   { slug: string; updated_at: string }[]
 > {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("public_products")
     .select("slug, updated_at");
   return data ?? [];
 }
+
+export const getAllProductSlugs = unstable_cache(
+  getAllProductSlugsUncached,
+  ["product-slugs"],
+  { tags: [CATALOGUE_TAG], revalidate: CACHE_TTL },
+);
 
 export { SOLD_LAST };

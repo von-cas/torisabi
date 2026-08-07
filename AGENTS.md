@@ -30,8 +30,13 @@ Supabase (Postgres + Auth + Storage, Singapore) · Cloudflare Workers via
   the `anon` role has no grant on `products` at all. Use `src/lib/queries.ts`.
 - **Sold items stay on the site.** Status `sold_out` renders a SOLD badge and a
   disabled button; it is never hidden. Only `draft` and archived are invisible.
-- **Public pages render dynamically** so an admin edit shows immediately. Do not
-  add ISR or an incremental cache without revisiting §10 of the plan.
+- **Public pages are cached (ISR) and purged on demand.** Home and product
+  pages read through the cookie-free client (`src/lib/supabase/public.ts`) +
+  `unstable_cache` tagged `CATALOGUE_TAG` (`src/lib/queries.ts`); admin writes
+  call `revalidatePublicSite()` → `/api/revalidate` (`revalidateTag`), so an edit
+  still shows immediately. `/products` search stays dynamic. Add a new public
+  read? Tag it `CATALOGUE_TAG`. Add a new product mutation? Call
+  `revalidatePublicSite()`. See §10 of the plan before changing this.
 - The orders payment column is `payment_state`, not `payment_status`.
 - Product codes, order numbers and invoice numbers come from database
   sequences. Never generate them client-side.

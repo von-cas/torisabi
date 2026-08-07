@@ -9,12 +9,34 @@ import { safeGetProductBySlug } from "@/components/site/safe-queries";
 import { StatusBadge } from "@/components/site/status-badge";
 import { SHADE } from "@/components/site/sticker";
 import { formatPeso } from "@/lib/money";
+import { getAllProductSlugs } from "@/lib/queries";
 import {
   breadcrumbJsonLd,
   metaDescription,
   productJsonLd,
   storageUrl,
 } from "@/lib/seo";
+
+// Cached (ISR): served from cache, not re-rendered per visitor. Purged the
+// instant an admin changes a product via /api/revalidate; the hour is only a
+// backstop. See MASTER-PLAN.md §10.
+export const revalidate = 3600;
+
+/**
+ * Listing the current slugs is what turns this dynamic route into an ISR one —
+ * `revalidate` alone is ignored without it. Known products prerender; a newly
+ * published one isn't in the list, so it renders on the first visit and is
+ * cached from then on (dynamicParams stays true). If Supabase is unreachable at
+ * build, every page just renders on demand rather than failing the build.
+ */
+export async function generateStaticParams() {
+  try {
+    const slugs = await getAllProductSlugs();
+    return slugs.map(({ slug }) => ({ slug }));
+  } catch {
+    return [];
+  }
+}
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;

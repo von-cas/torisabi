@@ -18,6 +18,11 @@ import {
 import { organizationJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
+// Cached (ISR): served from cache, not re-rendered per visitor. Purged the
+// instant an admin changes a product via /api/revalidate; the hour is only a
+// backstop. See MASTER-PLAN.md §10.
+export const revalidate = 3600;
+
 // `absolute` keeps the home page off the "%s | Torisabi" template — the brand is
 // already in the title, and "Home | Torisabi" says less to a searcher.
 export const metadata: Metadata = {

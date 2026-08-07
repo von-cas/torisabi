@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ArrowDown, ArrowUp, LoaderCircle, Trash2 } from "lucide-react";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 import { createClient } from "@/lib/supabase/client";
 import type { ProductPhoto } from "@/lib/types";
 import { PHOTO_BUCKET, uploadProductPhotos } from "./photos";
@@ -32,6 +33,7 @@ export function ProductPhotos({
     setError(null);
     try {
       await work(createClient());
+      await revalidatePublicSite();
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Something failed.");

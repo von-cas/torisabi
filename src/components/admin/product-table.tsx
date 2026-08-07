@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { formatPeso } from "@/lib/money";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 import { createClient } from "@/lib/supabase/client";
 import { PRODUCT_STATUS_LABELS, type ProductStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -80,6 +81,7 @@ export function ProductTable({
         .update({ status })
         .eq("id", row.id);
       if (error) throw new Error(error.message);
+      await revalidatePublicSite();
       router.refresh();
     } catch (caught) {
       setPending((current) => {

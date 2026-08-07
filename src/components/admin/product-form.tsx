@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { centavosToInput, parsePesoToCentavos } from "@/lib/money";
+import { revalidatePublicSite } from "@/lib/revalidate-public";
 import { createClient } from "@/lib/supabase/client";
 import {
   PRODUCT_STATUS_LABELS,
@@ -126,6 +127,7 @@ export function ProductForm({
           .update(payload)
           .eq("id", product.id);
         if (updateError) throw new Error(updateError.message);
+        await revalidatePublicSite();
         setSaved(true);
         router.refresh();
         return;
@@ -159,6 +161,7 @@ export function ProductForm({
         await uploadProductPhotos(supabase, id, files, 0);
       }
 
+      await revalidatePublicSite();
       router.push("/admin/products");
       router.refresh();
     } catch (caught) {
@@ -178,6 +181,7 @@ export function ProductForm({
         .update({ archived_at: new Date().toISOString() })
         .eq("id", product.id);
       if (archiveError) throw new Error(archiveError.message);
+      await revalidatePublicSite();
       router.push("/admin/products");
       router.refresh();
     } catch (caught) {
@@ -213,6 +217,7 @@ export function ProductForm({
         .delete()
         .eq("id", product.id);
       if (deleteError) throw new Error(deleteError.message);
+      await revalidatePublicSite();
       router.push("/admin/products");
       router.refresh();
     } catch (caught) {

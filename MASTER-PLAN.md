@@ -296,7 +296,9 @@ Mobile: simple collapsible menu. Order on Instagram stays visible (header or flo
 
 ### Frontend ↔ admin sync
 
-The public site and the admin read and write the **same Supabase database** — there is nothing to sync manually. Product pages are cached at the edge for speed and **revalidated on demand**: saving a product in the admin (for example marking it Sold Out) refreshes that product page and the gallery within seconds. Marking an item sold in the admin is the only step needed for the SOLD badge and disabled button to appear on the website.
+The public site and the admin read and write the **same Supabase database** — there is nothing to sync manually. The home page and product pages are **cached (ISR) and revalidated on demand**: every admin change — add, publish, edit, mark Sold, archive, delete, or a photo change — calls a protected `/api/revalidate` endpoint that purges the catalogue cache (`revalidateTag("catalogue")`), so the change shows on the public site **immediately**. The one-hour `revalidate` is only a backstop for a missed purge. The `/products` search page stays dynamic because its results depend on the query. Public reads go through a cookie-free client (`src/lib/supabase/public.ts`) wrapped in `unstable_cache` (`src/lib/queries.ts`) — that is what lets the pages be cached at all, cutting the compute cost of serving repeat visitors. Marking an item Sold in the admin is the only step needed for the SOLD badge and disabled button to appear on the website.
+
+> **Extending this safely:** any new public read must be wrapped in `unstable_cache` and tagged `CATALOGUE_TAG`; any new product/photo mutation must call `revalidatePublicSite()` (client) or `revalidateTag(CATALOGUE_TAG, "max")` (server) so edits keep showing at once. A missed tag is how the site would go stale.
 
 ### SEO
 
