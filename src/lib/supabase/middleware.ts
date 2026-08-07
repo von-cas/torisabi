@@ -20,11 +20,27 @@ function redirectToLogin(request: NextRequest) {
   return NextResponse.redirect(url);
 }
 
+function redirectToAdmin(request: NextRequest) {
+  // `next` must not point back at the login page, or the redirect below would
+  // bounce against itself forever.
+  const next = request.nextUrl.searchParams.get("next");
+  const usable =
+    next &&
+    next.startsWith("/admin") &&
+    !next.startsWith("//") &&
+    next !== LOGIN_PATH;
+  const url = request.nextUrl.clone();
+  url.pathname = usable ? next : "/admin";
+  url.search = "";
+  return NextResponse.redirect(url);
+}
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const path = request.nextUrl.pathname;
-  const guarded = path.startsWith("/admin") && path !== LOGIN_PATH;
+  const onLogin = path === LOGIN_PATH;
+  const guarded = path.startsWith("/admin") && !onLogin;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -68,6 +84,21 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (guarded && !signedIn) return redirectToLogin(request);
+
+  // An admin who already has a session but opens /admin/login directly — from a
+  // bookmark, the address bar, or the home-screen icon — used to be handed the
+  // form again. Typing the password there starts a BRAND NEW session at aal1,
+  // and that is what demanded a fresh 6-digit code on every single visit. Send
+  // her straight through instead. A session that still owes a factor stays on
+  // the form, where the code step is waiting for it.
+  if (onLogin && signedIn) {
+    const { data: aal } = await supabase.auth.mfa
+      .getAuthenticatorAssuranceLevel()
+      .catch(() => ({ data: null }));
+    if (aal && aal.currentLevel === aal.nextLevel) {
+      return redirectToAdmin(request);
+    }
+  }
 
   return response;
 }
