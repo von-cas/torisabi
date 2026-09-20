@@ -9,9 +9,13 @@ Updated 2026-08-05. v2: WordPress removed, stack locked to Cloudflare + Next.js 
 
 ---
 
+## Note-review correction, 2026-09-20
+
+Local source confirms Netlify deployment and Messenger ordering. The older Cloudflare/Instagram design sections below are historical; see [reviewed decisions](docs/reviewed-decisions.md). This documentation review does not assert a fresh production health result or change the build checklist. Validation: package.json adapter/deploy script, src/lib/social.ts and OrderButtons were read; exact documentation diff inspected.
+
 ## ▶ START HERE (resume point)
 
-**Status: LIVE at https://www.torisabi.com on Netlify**, redesigned around the real brand (crafter's white worktable, logo from the shop's TikTok, ordering via `ig.me/m/torisabi.ph`). Phases 0, 1 and 2 are built and the hosting migration (§12) is complete. **Deploys are continuous — pushing to `main` auto-builds and publishes** (the repo is public; see T12.8).
+**Status: LIVE at https://www.torisabi.com on Netlify**, redesigned around the real brand (crafter's white worktable, logo from the shop's TikTok, ordering via Facebook Messenger). Phases 0, 1 and 2 are built and the hosting migration (§12) is complete. **Deploys are continuous — pushing to `main` auto-builds and publishes** (the repo is public; see T12.8).
 
 **Nothing is blocked on Von right now.**
 

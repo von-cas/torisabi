@@ -11,15 +11,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Torisabi — working notes for agents
 
 Product catalog for torisabi.com. Customers browse here and order through
-Instagram DMs; the owner runs products, orders, invoices and expenses from
+Facebook Messenger; the owner runs products, orders, invoices and expenses from
 `/admin`. **`MASTER-PLAN.md` is the single source of truth** — read it before
 doing anything, and follow the builder protocol in its §11.
 
 ## Stack
 
 Next.js 16 (App Router) · React 19 · Tailwind v4 · shadcn/ui · TypeScript ·
-Supabase (Postgres + Auth + Storage, Singapore) · Cloudflare Workers via
-`@opennextjs/cloudflare`.
+Supabase (Postgres + Auth + Storage, Singapore) · Netlify via
+`@netlify/plugin-nextjs`. See `docs/reviewed-decisions.md` for corrections to the August plan.
 
 ## Rules that are easy to get wrong
 
@@ -53,8 +53,7 @@ Useful commands:
 ```bash
 npm run dev          # local site at :3000
 npx tsc --noEmit     # type check
-npm run preview      # build + run the real Workers runtime locally
-npm run deploy       # build + deploy to Cloudflare
+npm run deploy       # build + deploy to Netlify (only when deployment is requested)
 ```
 
 Schema changes go in `supabase/migrations/`. After any change to security rules,
